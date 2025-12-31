@@ -6,6 +6,7 @@ using Archipelago.Core.GameClients;
 using Archipelago.Core.Models;
 using Archipelago.Core.Traps;
 using Archipelago.Core.Util;
+using Archipelago.Core.Util.Hook;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Packets;
 using Avalonia;
@@ -18,10 +19,12 @@ using ReactiveUI;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reflection;
 using System.Runtime.InteropServices.Marshalling;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -54,6 +57,28 @@ public partial class App : Application
 
     private static int _pingCounter;
 
+    private static byte[] byteArr;
+
+    private static byte[] prevByteArr;
+
+    private static bool[] isStatic;
+
+    private static StreamWriter writer;
+
+    private static bool[] baseIsStatic;
+
+    private static byte[] baseByteArr;
+
+    private static bool[] zeroArray;
+
+    private static bool usebase;
+
+    private static bool memoryanalysis;
+
+    private static bool zeroanalysis;
+
+    private static Archipelago.Core.Util.Hook.FunctionHook _helloHook;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -78,6 +103,7 @@ public partial class App : Application
         }
         base.OnFrameworkInitializationCompleted();
     }
+    
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
@@ -101,26 +127,225 @@ public partial class App : Application
         Log.Logger.Information("This Archipelago Client is compatible only with the NTSC-U 1.1 release of Spyro 3 (North America Greatest Hits version).");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
+        
+
+        usebase = false;
+        memoryanalysis = false;
+        zeroanalysis = true;
+        if (zeroanalysis)
+        {
+            
+            _appTickTimer = new Timer();
+            _appTickTimer.Interval = 300; // ms - adjust to desired tick rate
+            _appTickTimer.AutoReset = true;
+            _appTickTimer.Elapsed += (s, ev) =>
+            {
+                Interlocked.Increment(ref _pingCounter);
+                Log.Logger.Information($"Ping#:{_pingCounter}");
+                int diff = 0;
+                byteArr = Memory.ReadByteArray(0, 0b1000000000000000000000);
+                if (_pingCounter == 1)
+                {
+                    //Memory.WriteByte(0x6d03d, 0b11111111);
+                    //Memory.WriteByte(0x6d03e, 0b11111111);
+                    //Memory.WriteByte(0x6d03f, 0b11111111);
+                    zeroArray = new bool[byteArr.Length];
+                    using (StreamReader reader = new StreamReader("C:\\Users\\Deoxm\\Desktop\\AP folder\\zero.txt", Encoding.UTF8))
+                    {
+                        String line;
+                        int i = 0;
+                        while (true)
+                        {
+                            line = reader.ReadLine();
+                            if (line == null)
+                            {
+                                break;
+                            }
+                            zeroArray[i] = line.Contains("u"); //if is true
+                            if (i < 10)
+                            {
+                                Log.Logger.Information($"Base zero at {i.ToString("X")}: {zeroArray[i]}");
+                            }
+                            i++;
+                        }
+                    }
+
+                    //for (int i = 0; i < byteArr.Length; i++)
+                    //{
+                    //    zeroArray[i] = true;
+                    //}
+                    CustomHook pressCircle = new CustomHook([
+                        "lw $t0, 0x80069bb8"
+                        ]);
+                    //List<byte> b = CustomHook.ConvertAsm(["jmp 0x15A04"]);
+                    //Log.Logger.Information($"asm converted: {Convert.ToHexString(b.ToArray())}");
+                }
+                
+                
+                for (int i = 0; i < byteArr.Length; i++)
+                {
+                    if (zeroArray[i])
+                    {
+                        if (byteArr[i] != 0)
+                        {
+                            zeroArray[i] = false;
+                            diff++;
+                            if (diff <= 20)
+                            {
+                                Log.Logger.Information($"New non-zero at {i.ToString("X")}, Curr: {byteArr[i]}");
+                            }
+                        }
+                    }
+                    
+                }
+               
+                if (_pingCounter % 20000 == 0)
+                {
+                    writer = new StreamWriter("C:\\Users\\Deoxm\\Desktop\\AP folder\\zero.txt", false, Encoding.UTF8);
+                    for (int i = 0; i < byteArr.Length; i++)
+                    {
+                        writer.Write($"{i.ToString("X")}: {zeroArray[i]}\n");
+                    }
+                    writer.Close();
+                    Log.Logger.Information($"wrote to zero.txt");
+                }
+            };
+            return;
+        }
+        if (!memoryanalysis) return;
         _appTickTimer = new Timer();
-        _appTickTimer.Interval = 1000; // ms - adjust to desired tick rate
+        _appTickTimer.Interval = 600; // ms - adjust to desired tick rate
         _appTickTimer.AutoReset = true;
         _appTickTimer.Elapsed += (s, ev) =>
         {
             // increment thread-safely and log
             Interlocked.Increment(ref _pingCounter);
-            Log.Logger.Information($"Ping {_pingCounter}");
-        };
-        _appTickTimer.Enabled = true;
+            //Log.Logger.Information($"Ping {_pingCounter}");
 
+            Log.Logger.Information($"Ping#:{_pingCounter},  {Memory.ReadByte(0x6d03d)},{Memory.ReadByte(0x6d03e)}");
+            //Log.Logger.Information($" {Memory.ReadByte(0x6cc25)},{Memory.ReadByte(0x6cc26)},{Memory.ReadByte(0x6cc27)},{Memory.ReadByte(0x6cc28)},{Memory.ReadByte(0x6cc29)},{Memory.ReadByte(0x6cc2a)}");
+            prevByteArr = byteArr;
+            int diff = 0;
+            byteArr = Memory.ReadByteArray(0, 0b1000000000000000000000);
+            if (_pingCounter == 1)
+            {
+                //String p = "";
+                for (int i = 0; i < byteArr.Length; i++)
+                {
+                    writer.Write($"{i.ToString("X")}: {Convert.ToString(byteArr[i], 2)}\n");
+                }
+
+                writer.Close();
+                isStatic = new bool[byteArr.Length];
+                for (int i = 0; i < byteArr.Length; i++)
+                {
+                    isStatic[i] = true;
+                }
+                if (usebase)
+                {
+                    DifferenceInArr();
+                }
+            }
+            else if (_pingCounter < 301)
+            {
+                if (!usebase)
+                {
+                    for (int i = 0; i < byteArr.Length; i++)
+                    {
+                        if (byteArr[i] != prevByteArr[i])
+                        {
+                            if (isStatic[i] && diff <= 200)
+                            {
+                                Log.Logger.Information($"New change at {i.ToString("X")}, Prev: {prevByteArr[i]}, Curr: {byteArr[i]}");
+                                diff++;
+                            }
+                            isStatic[i] = false;
+                        }
+                    }
+                }
+                if (diff >= 200)
+                {
+                    Log.Logger.Information("...");
+                }
+                if (usebase)
+                {
+                    DifferenceInArr();
+                }
+            }
+            else// if (_pingCounter == 301)
+            {
+                writer = new StreamWriter("C:\\Users\\Deoxm\\Desktop\\AP folder\\static.txt", false, Encoding.UTF8);
+                for (int i = 0; i < byteArr.Length; i++)
+                {
+                    writer.Write($"{i.ToString("X")}: {isStatic[i]}\n");
+                }
+                writer.Close();
+                Log.Logger.Information($"Done Done Done");
+            }
+        };
+        
+
+        writer = new StreamWriter("C:\\Users\\Deoxm\\Desktop\\AP folder\\out.txt", false, Encoding.UTF8);
+        if (!usebase) return;
+        using (StreamReader reader = new StreamReader("C:\\Users\\Deoxm\\Desktop\\AP folder\\basestatic.txt", Encoding.UTF8))
+        {
+            String line;
+            baseIsStatic = new bool[0b1000000000000000000000];
+            int i = 0;
+            while (true)
+            {
+                line = reader.ReadLine();
+                if (line == null)
+                {
+                    break;
+                }
+                baseIsStatic[i] = line.Contains("u"); //if is true
+                i++;
+            }
+        }
+        using (StreamReader reader = new StreamReader("C:\\Users\\Deoxm\\Desktop\\AP folder\\baseout.txt", Encoding.UTF8))
+        {
+            String line;
+            baseByteArr = new byte[0b1000000000000000000000];
+            int i = 0;
+            while (true)
+            {
+                line = reader.ReadLine();
+                if (line == null)
+                {
+                    break;
+                }
+                int off = line.IndexOf(":");
+                baseByteArr[i] = Convert.ToByte(line.Substring(off + 2), 2);
+                i++;
+            }
+        }
     }
 
-    private void MyFunc()
+    private void DifferenceInArr()
     {
-        int i = 0;
-        while (true)
+        int diff = 0;
+        for (int i = 0; i < byteArr.Length; i++)
         {
-            Log.Logger.Information("Ping" + i);
-            i++;
+            if (usebase && !baseIsStatic[i]) continue;
+            if (!isStatic[i]) continue;
+            if (baseByteArr[i] != byteArr[i])
+            {
+                if (diff < 50)
+                {
+                    Log.Logger.Information($"Diff at {i.ToString("X")}, Base: {baseByteArr[i]}, Curr: {byteArr[i]}");
+                }
+                isStatic[i] = false;
+                diff++;
+            }
+        }
+        if (diff == 0)
+        {
+            Log.Logger.Information("No diff between base and curr");
+        }
+        else if (diff >= 50)
+        {
+            Log.Logger.Information(".....");
         }
     }
 
@@ -178,6 +403,33 @@ public partial class App : Application
 
         Client.Connected += OnConnected;
         Client.Disconnected += OnDisconnected;
+
+        if (memoryanalysis || zeroanalysis)
+        {
+            _appTickTimer.Enabled = true;
+        }
+
+        //install (example location)
+        nint targetAddress = (nint)(0x15A04 + Memory.GlobalOffset);
+        _helloHook = new Archipelago.Core.Util.Hook.FunctionHook(targetAddress, (ctx) =>
+        {
+            // run custom code when hook fires
+            Serilog.Log.Logger.Information("hello world (hook)");
+
+            // Optionally suppress original instructions:
+            ctx.SuppressOriginal = true;
+
+            
+
+            // return value is not used by the implementation; leave as true
+            return true;
+        }, 8);
+        // Write the jump into the target function
+        if (!_helloHook.Install())
+        {
+            Serilog.Log.Logger.Warning("Failed to install function hook at 0x15A04");
+        }
+        Log.Logger.Information($"_isinstalled");
 
         await Client.Connect(e.Host, "Spyro 3");
         if (!Client.IsConnected)
@@ -1136,5 +1388,6 @@ public partial class App : Application
             _sparxPowerTimer.Enabled = false;
             _sparxPowerTimer = null;
         }
+       
     }
 }
