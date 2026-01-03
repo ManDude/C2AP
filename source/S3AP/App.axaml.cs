@@ -127,7 +127,13 @@ public partial class App : Application
         Log.Logger.Information("This Archipelago Client is compatible only with the NTSC-U 1.1 release of Spyro 3 (North America Greatest Hits version).");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
-        
+        CustomHook blockCircle = new CustomHook([
+                        "la $t0, 0x80069bb8",
+                        "lw $t1, 0($t0)",
+                        "la $t2, 0x20000000",
+                        "or $t1, $t1, $t2",
+                        "sw $t1, 0($t0)",
+                        ]);
 
         usebase = false;
         memoryanalysis = false;
@@ -170,18 +176,20 @@ public partial class App : Application
                         }
                     }
 
+                    InputLock.Initialize();
                     //for (int i = 0; i < byteArr.Length; i++)
                     //{
                     //    zeroArray[i] = true;
                     //}
-                    CustomHook pressCircle = new CustomHook([
-                        "lw $t0, 0x80069bb8"
-                        ]);
+
+                    
+                    //blockCircle.LogHookBytes();
+                    //blockCircle.InsertHook(0x15A04, 4, 0xf000);
                     //List<byte> b = CustomHook.ConvertAsm(["jmp 0x15A04"]);
                     //Log.Logger.Information($"asm converted: {Convert.ToHexString(b.ToArray())}");
                 }
-                
-                
+
+
                 for (int i = 0; i < byteArr.Length; i++)
                 {
                     if (zeroArray[i])
@@ -198,8 +206,23 @@ public partial class App : Application
                     }
                     
                 }
-               
-                if (_pingCounter % 20000 == 0)
+                
+                if (_pingCounter == 10)
+                {
+                    //blockCircle.RemoveHook();
+                    InputLock.LockInput(InputFlag.Square);
+                    InputLock.LockInput(InputFlag.Triangle);
+                    InputLock.LockInput(InputFlag.Up | InputFlag.Down | InputFlag.Right | InputFlag.Left);
+                }
+                if ( _pingCounter == 20)
+                {
+                    InputLock.UnlockInput(InputFlag.Circle);
+                    InputLock.UnlockInput(InputFlag.Cross);
+                    InputLock.UnlockInput(InputFlag.Square);
+                    //InputLock.UnlockInput(InputFlag.Triangle);
+                    InputLock.UnlockInput(InputFlag.Up | InputFlag.Down | InputFlag.Right | InputFlag.Left);
+                }
+                if (_pingCounter % 200000 == 0)
                 {
                     writer = new StreamWriter("C:\\Users\\Deoxm\\Desktop\\AP folder\\zero.txt", false, Encoding.UTF8);
                     for (int i = 0; i < byteArr.Length; i++)
