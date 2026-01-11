@@ -47,7 +47,7 @@ namespace S3AP
             RemoveHook();
             _asm = asm;
             _bytes = ConvertAsm(asm);
-            InsertHook(targetAddress, targetInstructionSize, freeAddress);
+            InsertHook(targetAddress, freeAddress);
         }
 
         private static byte EncodeRegister(string register)
