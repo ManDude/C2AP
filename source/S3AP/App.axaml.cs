@@ -90,13 +90,13 @@ public partial class App : Application
         Log.Logger.Information("This Archipelago Client is compatible only with the NTSC-U 1.1 release of Spyro 3 (North America Greatest Hits version).");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
-        CustomHook blockCircle = new CustomHook([
-                        "la $t0, 0x80069bb8",
-                        "lw $t1, 0($t0)",
-                        "la $t2, 0x20000000",
-                        "or $t1, $t1, $t2",
-                        "sw $t1, 0($t0)",
-                        ]);
+        //CustomHook blockCircle = new CustomHook([
+        //                "la $t0, 0x80069bb8",
+        //                "lw $t1, 0($t0)",
+        //                "la $t2, 0x20000000",
+        //                "or $t1, $t1, $t2",
+        //                "sw $t1, 0($t0)",
+        //                ]);
 
         
         
@@ -155,10 +155,16 @@ public partial class App : Application
 
         Memory.GlobalOffset = Memory.GetDuckstationOffset();
 
+        //InputLock.Initialize();
+        //InputLock.LockInput(InputFlag.Square);
+        BaseHooks.Initialize();
+
+        
+
         Client.Connected += OnConnected;
         Client.Disconnected += OnDisconnected;
 
-        await Client.Connect(e.Host, "Spyro 3");
+        await Client.Connect(e.Host, "Crash2");
         if (!Client.IsConnected)
         {
             Log.Logger.Error("Your host seems to be invalid.  Please confirm that you have entered it correctly.");
@@ -174,7 +180,7 @@ public partial class App : Application
         await Client.Login(e.Slot, !string.IsNullOrWhiteSpace(e.Password) ? e.Password : null);
         if (Client.Options?.Count > 0)
         {
-            Client.MonitorLocations(GameLocations);
+            // Client.MonitorLocations(GameLocations);
             Log.Logger.Information("Warnings and errors above are okay if this is your first time connecting to this multiworld server.");
         }
         else
@@ -196,11 +202,67 @@ public partial class App : Application
         //int currentHealth;
 
         // when receiving a gem/crystal, just set a bit to 1 in a set part in free memory, the specific crystal/white gem doesn't matter, only the count matters
+        uint bytenum = 0;
+        int bitnum = 0;
         switch (args.Item.Name)
         {
-            //case "Crystal":
-            //    Memory.ReadBit();
-            //    break;
+            case "Crystal":
+                while (Memory.ReadBit(Addresses.CrystalsReceivedAddress + bytenum, bitnum))
+                {
+                    bitnum++;
+                    if (bitnum > 7)
+                    {
+                        bitnum = 0;
+                        bytenum++;
+                    }
+                }
+                if (bytenum > 8)
+                {
+                    Log.Logger.Warning("Received crystals above the 64 crystal limit (somehow)");
+                    return;
+                } 
+                Memory.WriteBit(Addresses.CrystalsReceivedAddress + bytenum, bitnum, true);
+                break;
+            case "Clear Gem":
+                while (Memory.ReadBit(Addresses.GemsReceivedAddress + bytenum, bitnum))
+                {
+                    bitnum++;
+                    if (bitnum > 7)
+                    {
+                        bitnum = 0;
+                        bytenum++;
+                    }
+                    if (bytenum == 7 && bitnum == 2)
+                    {
+                        //skip over the colored gems
+                        bitnum = 7;
+                    }
+                }
+                if (bytenum > 8)
+                {
+                    Log.Logger.Warning("Received gems above the 64 gems limit (somehow)");
+                    return;
+                }
+                Memory.WriteBit(Addresses.GemsReceivedAddress + bytenum, bitnum, true);
+                break;
+            case "Red Gem":
+                Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.RedGemReceivedBit, true);
+                break;
+            case "Green Gem":
+                Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.GreenGemReceivedBit, true);
+                break;
+            case "Purple Gem":
+                Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.PurpleGemReceivedBit, true);
+                break;
+            case "Blue Gem":
+                Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.BlueGemReceivedBit, true);
+                break;
+            case "Yellow Gem":
+                Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.YellowGemReceivedBit, true);
+                break;
+            case "Life":
+                Log.Logger.Information("Recieving lives is not yet implemented in this Archipelago Client.");
+                break;
         }
         
     }

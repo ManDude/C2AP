@@ -37,8 +37,8 @@ namespace S3AP
 
         public static void Initialize()
         {
-
-            _inputHook.InsertHook(0x15A04, 4, 0xf000);
+            //0x15A38 works, also 0x15A0C, 0x15A44
+            _inputHook.InsertHook(0x15A54, 0xf000);
         }
 
         private static void RefreshInputHook()

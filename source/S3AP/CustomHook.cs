@@ -50,6 +50,72 @@ namespace S3AP
             InsertHook(targetAddress, targetInstructionSize, freeAddress);
         }
 
+        private static byte EncodeRegister(string register)
+        {
+            byte result = 0;
+            switch (register[1])
+            {
+                case 'z':
+                    return 0;
+                case 'v':
+                    result = 0x2;
+                    break;
+                case 'a':
+                    result = 0x4;
+                    break;
+                case 't':
+                    result = 0x8;
+                    break;
+                case 's':
+                    if (register[2] == 'p')
+                    {
+                        return 0x1D;
+                    }
+                    result = 0x10;
+                    break;
+
+            }
+            
+            result += Convert.ToByte(register[2].ToString());
+
+            return result;
+        }
+        private static byte[] ConvertIType(string[] instruction)
+        {
+            uint opcode;
+            uint rs;
+            uint rt;
+            uint immed;
+
+            if (instruction.Length != 4)
+            {
+                Log.Error($"CustomHook: Invalid {instruction[0]}, length was {instruction.Length}");
+                return [0, 0, 0, 0];
+            }
+            switch (instruction[0])
+            {
+                case "beq":
+                    opcode = 0x4;
+                    break;
+                case "bne":
+                    opcode = 0x5;
+                    break;
+                case "addiu":
+                    opcode = 0x9; //might need to flip rt and rs, but it doesn't matter right now since they are equal in our usage
+                    break;
+                default:
+                    Log.Error($"CustomHook: Unknown/unimplemented I-type instruction {instruction[0]}");
+                    return [0, 0, 0, 0];
+            }
+            
+            rs = EncodeRegister(instruction[1]);
+            rt = EncodeRegister(instruction[2]);
+
+            immed = Convert.ToUInt32(instruction[3].Replace("0x", ""), 16) & 0xFFFF;
+
+            return ConvertToBytes(opcode, rs, rt, immed);
+        }
+
         public static List<byte> ConvertAsm(List<string> asm)
         {
             List<byte> bytes = new List<byte>();
@@ -69,7 +135,8 @@ namespace S3AP
                 uint funct = 0;
                 uint immed = 0;
                 //uint encoding = 0;
-                switch(instruction[0])
+                //Log.Information($"CustomHook: Converting instruction at line {i + 1}: {asm[i]}");
+                switch (instruction[0])
                 {
                     case "jmp":
                         {
@@ -156,7 +223,7 @@ namespace S3AP
                         opcode = 0x23; //lw
 
                         //0($t0)
-                        tempsplit = instruction[2].Replace("$t", "").Replace(")", "").Split('(');
+                        tempsplit = instruction[2].Replace(")", "").Split('(');
 
                         if (tempsplit.Length != 2)
                         {
@@ -164,8 +231,8 @@ namespace S3AP
                             break;
                         }
 
-                        rs = (uint)0x8 + Convert.ToByte(tempsplit[1]);
-                        rt = (uint)0x8 + Convert.ToByte(instruction[1].Replace("$t", ""));
+                        rs = EncodeRegister(tempsplit[1]);
+                        rt = EncodeRegister(instruction[1]);
 
                         immed = Convert.ToUInt32(tempsplit[0].Replace("0x", ""), 16);
 
@@ -181,16 +248,16 @@ namespace S3AP
                         opcode = 0x2B; //sw
 
                         //0($t0)
-                        tempsplit = instruction[2].Replace("$t", "").Replace(")", "").Split('(');
+                        tempsplit = instruction[2].Replace(")", "").Split('(');
 
                         if (tempsplit.Length != 2)
                         {
                             Log.Error($"CustomHook: tempsplit didn't work as intended (length = {tempsplit.Length})");
                             break;
                         }
-
-                        rs = (uint)0x8 + Convert.ToByte(tempsplit[1]);
-                        rt = (uint)0x8 + Convert.ToByte(instruction[1].Replace("$t", ""));
+                        
+                        rs = EncodeRegister(tempsplit[1]);
+                        rt = EncodeRegister(instruction[1]);
 
                         immed = Convert.ToUInt32(tempsplit[0].Replace("0x", ""), 16);
 
@@ -221,10 +288,28 @@ namespace S3AP
                         }
                         opcode = 0; //r type
                         funct = 0x25; //or
-                        rd = (uint)0x8 + Convert.ToByte(instruction[1].Replace("$t", ""));
-                        rs = (uint)0x8 + Convert.ToByte(instruction[2].Replace("$t", ""));
-                        rt = (uint)0x8 + Convert.ToByte(instruction[3].Replace("$t", ""));
+                        rd = EncodeRegister(instruction[1]);
+                        rs = EncodeRegister(instruction[2]);
+                        rt = EncodeRegister(instruction[3]);
                         bytes.AddRange(ConvertToBytes(rs, rt, rd, shamt, funct));
+                        break;
+                    case "subu":
+                        if (instruction.Length != 4)
+                        {
+                            Log.Error($"CustomHook: Invalid {instruction[0]} instruction format at line {i + 1}, length was {instruction.Length}");
+                            break;
+                        }
+                        opcode = 0; //r type
+                        funct = 0x23; //subu
+                        rd = EncodeRegister(instruction[1]);
+                        rs = EncodeRegister(instruction[2]);
+                        rt = EncodeRegister(instruction[3]);
+                        bytes.AddRange(ConvertToBytes(rs, rt, rd, shamt, funct));
+                        break;
+                    case "beq":
+                    case "bne":
+                    case "addiu":
+                        bytes.AddRange(ConvertIType(instruction));
                         break;
                     default:
                         {
@@ -272,8 +357,9 @@ namespace S3AP
             //bytes.Reverse();
             return bytes;
         }
-        public void InsertHook(ulong targetAddress, int targetInstructionSize, ulong freeAddress)
+        public void InsertHook(ulong targetAddress,ulong freeAddress)
         {
+            int targetInstructionSize = 8;
             if (_targetAddress != 0 && _freeAddress != 0)
             {
                 Log.Warning("can't run InsertHook on already inserted hook");
@@ -295,7 +381,11 @@ namespace S3AP
             }
 
             byte[] first = Memory.ReadByteArray(_targetAddress, _targetInstructionSize);
-            List<byte> jmpto = ConvertAsm([$"jmp 0x{(_freeAddress):X}"]);
+            List<byte> jmpto = ConvertAsm([$"jmp 0x{(_freeAddress):X}", "nop"]);
+            while (jmpto.Count < targetInstructionSize)
+            {
+                jmpto.Add(0x00);
+            }
             Memory.WriteByteArray(_targetAddress, jmpto.ToArray());
             Log.Information($"jmpto: {Convert.ToHexString([jmpto[0], jmpto[1], jmpto[2], jmpto[3]])}");
 
