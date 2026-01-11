@@ -12,6 +12,9 @@
         public const int BlueGemReceivedBit = 5;
         public const int YellowGemReceivedBit = 6;
         
+        public const uint CrystalLocationsAddress = 0x0006D03C; //64 bits
 
+        public const uint WasSwappedAddress = 0x0000EA1C; //32 bit boolean
+        public const uint CrystalLocationsSwapAddress = 0x0000EA20; // 64 bits
     }
 }
