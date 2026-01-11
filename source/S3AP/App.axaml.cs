@@ -120,6 +120,21 @@ public partial class App : Application
                 _useQuietHints = false;
                 break;
         }
+        string[] args = command.Split(' ');
+        if (args.Length == 2)
+        {
+            if (args[0] == "giveloc") //testing crystal locations
+            {
+                
+                uint address = Addresses.CrystalLocationsAddress;
+                int bits = Convert.ToInt32(args[1]);
+
+                address += (uint)(bits / 8);
+                bits = bits % 8;
+                Memory.WriteBit(address, bits, true);
+                Log.Logger.Information($"Checking location at crystal address 0x{address:X}, bit#{bits}");
+            }
+        }
     }
     private async void Context_ConnectClicked(object? sender, ConnectClickedEventArgs e)
     {
@@ -178,15 +193,16 @@ public partial class App : Application
         Client.ItemReceived += ItemReceived;
         Client.EnableLocationsCondition = () => Helpers.IsInGame();
         await Client.Login(e.Slot, !string.IsNullOrWhiteSpace(e.Password) ? e.Password : null);
-        if (Client.Options?.Count > 0)
-        {
-            // Client.MonitorLocations(GameLocations);
-            Log.Logger.Information("Warnings and errors above are okay if this is your first time connecting to this multiworld server.");
-        }
-        else
-        {
-            Log.Logger.Error("Failed to login.  Please check your host, name, and password.");
-        }
+        //if (Client.Options?.Count > 0)
+        //{
+        //    Client.MonitorLocations(GameLocations);
+        //    Log.Logger.Information("Warnings and errors above are okay if this is your first time connecting to this multiworld server.");
+        //}
+        //else
+        //{
+        //    Log.Logger.Error("Failed to login.  Please check your host, name, and password.");
+        //}
+        Client.MonitorLocations(GameLocations);
     }
 
     private void Client_LocationCompleted(object? sender, LocationCompletedEventArgs e)

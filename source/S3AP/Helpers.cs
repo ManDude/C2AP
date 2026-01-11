@@ -30,10 +30,37 @@ namespace S3AP
             return true;
         }
         
-        public static List<ILocation> BuildLocationList(bool includeGems = true, bool includeSkillPoints = true)
+        public static List<ILocation> BuildLocationList()
         {
-            
+            //int id = 10000;
             List<ILocation> locations = new List<ILocation>();
+            uint address;
+            int bit;
+            foreach (string locName in Addresses.BitOfLocation.Keys)
+            {
+                address = Addresses.CrystalLocationsAddress;
+                bit = Addresses.BitOfLocation[locName];
+
+                address += (uint)(bit / 8);
+                bit = bit % 8;
+
+                if (locName.Equals("Turtle Woods Crystal"))
+                {
+                    //debug
+                    Log.Logger.Information($"Turtle Woods Crystal location address 0x{address:X}, bit#{bit}");
+                }
+
+                Location loc = new Location
+                {
+                    Name = locName,
+                    Address = address,
+                    AddressBit = bit,
+                    CheckType = LocationCheckType.Bit,
+                    Category = "Crystal",
+                    Id = Addresses.LocationIdInApWorld[locName],
+                };
+                locations.Add(loc);
+            }
             
             return locations;
         }
