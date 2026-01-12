@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Archipelago.Core.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,17 @@ namespace S3AP
     internal class BaseHooks
     {
         private static CustomHook? PauseMenuItems;
+        private static CustomHook? CenterLiftHook1;
+        private static CustomHook? CenterLiftHook2;
+        private static CustomHook? CenterLiftHook3;
+        private static CustomHook? CenterLiftHook4;
 
         public static void Initialize()
         {
-            uint crystalAddressDelta = 0x0006d03c - Addresses.CrystalsReceivedAddress;
+            uint crystalAddressDelta = Addresses.CrystalLocationsAddress - Addresses.CrystalsReceivedAddress;
+            uint gemAddressDelta = Addresses.GemLocationsAddress - Addresses.GemsReceivedAddress;
+            uint offset = 0x80000000;
+
             PauseMenuItems = new CustomHook([
                 "addiu $sp, $sp, 0xFFF0",
                 "sw $t0, 0x4($sp)",
@@ -20,19 +28,108 @@ namespace S3AP
                 "la $t0, 0x8005f418", //address of "paused"
                 "lw $t1, 0($t0)",
                 "nop", //load delay
-                "beq $t1 $zero, 0x8", //"bne $t0 $zero, 0x8", //"beq $t1 $zero, 0x8", //branch to exit
-                "la $t0, 0x8006d03c",
-                "beq $v0 $t0, 0x2", //branch to eval
+                "beq $t1 $zero, 0x11", //"bne $t0 $zero, 0x8", //"beq $t1 $zero, 0x8", //branch to exit
+                $"la $t0, 0x{Addresses.CrystalLocationsAddress + offset:X}",
+                "beq $v0 $t0, 0x2", //branch to eval for crystals
+                "addiu $t0, $t0, 0x4",
+                "bne $v0 $t0, 0x4", //branch to check gems
+                //eval for crystals
+                $"la $t1, 0x{crystalAddressDelta:X}",
+                "subu $v0, $v0, $t1",
+                "beq $zero $zero, 0x8", //branch to exit
+                //check gems
+                $"la $t0, 0x{Addresses.GemLocationsAddress + offset:X}",
+                "beq $v0 $t0, 0x2", //branch to eval for gems
                 "addiu $t0, $t0, 0x4",
                 "bne $v0 $t0, 0x3", //branch to exit
-                //eval
-                $"la $t1, 0x{crystalAddressDelta:X}",
+                //eval for gems
+                $"la $t1, 0x{gemAddressDelta:X}",
                 "subu $v0, $v0, $t1",
                 //exit
                 "lw $t0, 0x4($sp)",
                 "lw $t1, 0x8($sp)",
                 "addiu $sp, $sp, 0x10",
             ]);
+
+            PauseMenuItems.InsertHook(0x3A8C0, 0xf030);
+
+            //uint address = CrashObject.FindObjectAddress(36, 8);
+            //uint bytecodeAddress = CrashObject.GetGoolBytecodeAddressFromObject(address);
+
+            //uint magicOffset = 0x180;
+
+            //uint instructionNumber1 = 6465; //instruction number to hook for first hook
+            //uint instructionNumber2 = 6488; //instruction number to hook for second hook
+
+            
+
+            ////uint CenterLiftHook1TargetAddress = bytecodeAddress + (instructionNumber1 * 4) - magicOffset;
+            //uint CenterLiftHook2TargetAddress = bytecodeAddress + (instructionNumber2 * 4) - magicOffset;
+            //uint CenterLiftHook3TargetAddress = bytecodeAddress + (instructionNumber1 * 4);
+            //uint CenterLiftHook4TargetAddress = bytecodeAddress + (instructionNumber2 * 4);
+
+
+
+            ////CustomHook.DecodeITypeInstruction(Memory.ReadUInt(CenterLiftHook1TargetAddress), out _, out _, out string rt, out _);
+
+            ////CenterLiftHook1 = new CustomHook([
+            ////    //$"la $t7, 0x{Addresses.CrystalsReceivedAddress + offset:X}",
+            ////    $"la {rt}, 0x{Addresses.CrystalsReceivedAddress + offset - 0x234:X}"
+            ////    //$"lw {rt}, 0($t7)"
+            ////    ]);
+
+            //CustomHook.DecodeITypeInstruction(Memory.ReadUInt(CenterLiftHook2TargetAddress), out _, out _, out string rt, out _);
+            //CenterLiftHook2 = new CustomHook([
+            //    //$"la $t7, 0x{Addresses.CrystalsReceivedAddress + offset + 0x4:X}",
+            //    $"la {rt}, 0x{Addresses.CrystalsReceivedAddress + offset - 0x234:X}"
+            //    //$"lw {rt}, 0($t7)"
+            //    ]);
+
+            //CustomHook.DecodeITypeInstruction(Memory.ReadUInt(CenterLiftHook3TargetAddress), out _, out _, out rt, out _);
+            //CenterLiftHook3 = new CustomHook([
+            //    //$"la $t7, 0x{Addresses.CrystalsReceivedAddress + offset + 0x4:X}",
+            //    $"la {rt}, 0x{Addresses.CrystalsReceivedAddress + offset - 0x234:X}"
+            //    //$"lw {rt}, 0($t7)"
+            //    ]);
+
+            //CustomHook.DecodeITypeInstruction(Memory.ReadUInt(CenterLiftHook4TargetAddress), out _, out _, out rt, out _);
+            //CenterLiftHook4 = new CustomHook([
+            //    //$"la $t7, 0x{Addresses.CrystalsReceivedAddress + offset + 0x4:X}",
+            //    $"la {rt}, 0x{Addresses.CrystalsReceivedAddress + offset - 0x234:X}"
+            //    //$"lw {rt}, 0($t7)"
+            //    ]);
+
+            ////CenterLiftHook1.InsertHook(CenterLiftHook1TargetAddress, PauseMenuItems._hookSize + PauseMenuItems._freeAddress + 0x4);
+            //CenterLiftHook2.InsertHook(CenterLiftHook2TargetAddress, PauseMenuItems._hookSize + PauseMenuItems._freeAddress + 0x4);
+            //CenterLiftHook3.InsertHook(CenterLiftHook3TargetAddress, CenterLiftHook2._freeAddress + CenterLiftHook2._hookSize + 0x4);
+            //CenterLiftHook4.InsertHook(CenterLiftHook4TargetAddress, CenterLiftHook3._freeAddress + CenterLiftHook3._hookSize + 0x4);
+
+
+
+            //147EB8
+            //148038
+
+
+            //PauseMenuItems = new CustomHook([
+            //    "addiu $sp, $sp, 0xFFF0",
+            //    "sw $t0, 0x4($sp)",
+            //    "sw $t1, 0x8($sp)",
+            //    "la $t0, 0x8005f418", //address of "paused"
+            //    "lw $t1, 0($t0)",
+            //    "nop", //load delay
+            //    "beq $t1 $zero, 0x8", //"bne $t0 $zero, 0x8", //"beq $t1 $zero, 0x8", //branch to exit
+            //    "la $t0, 0x8006d03c",
+            //    "beq $v0 $t0, 0x2", //branch to eval
+            //    "addiu $t0, $t0, 0x4",
+            //    "bne $v0 $t0, 0x3", //branch to exit
+            //    //eval
+            //    $"la $t1, 0x{crystalAddressDelta:X}",
+            //    "subu $v0, $v0, $t1",
+            //    //exit
+            //    "lw $t0, 0x4($sp)",
+            //    "lw $t1, 0x8($sp)",
+            //    "addiu $sp, $sp, 0x10",
+            //]);
             //uint offset = 0x80000000;
 
             //PauseMenuItems = new CustomHook([
@@ -89,7 +186,7 @@ namespace S3AP
             //    ]);
 
             //0x3A8C4 doesn't work
-            PauseMenuItems.InsertHook(0x3A8C0, 0xf030);
+
             //PauseMenuItems.InsertHook(0x4A8E0, 0xf030);
         }
     }

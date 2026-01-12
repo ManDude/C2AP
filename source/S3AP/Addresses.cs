@@ -16,11 +16,16 @@ namespace S3AP
         
         public const uint CrystalLocationsAddress = 0x0006D03C; //64 bits
 
-        public const uint WasSwappedAddress = 0x0000EA1C; //32 bit boolean
-        public const uint CrystalLocationsSwapAddress = 0x0000EA20; // 64 bits
+        //public const uint WasSwappedAddress = 0x0000EA1C; //32 bit boolean
+        //public const uint CrystalLocationsSwapAddress = 0x0000EA20; // 64 bits
+
+        public const uint GemLocationsAddress = 0x0006CEC0;
+
+        public const uint LevelIdAddress = 0x6ce09; //8 bits (probably)
 
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {
+            //crystals
             {"Sewer or Later Crystal", 10 },
             {"Night Fight Crystal", 12 },
             {"Hangin' Out Crystal", 13 },
@@ -45,7 +50,52 @@ namespace S3AP
             {"Bear Down Crystal", 34  },
             {"The Eel Deal Crystal", 35 },
             {"Bee-Having Crystal", 36 },
-            {"Spaced Out Crystal", 38 }
+            {"Spaced Out Crystal", 38 },
+
+            //gems
+            {"Hang Eight Clear Gem (Timer)", 1 },
+            {"Air Crash Clear Gem (Death Route)", 2 },
+            {"Sewer or Later Clear Gem (Yellow Gem Path)", 3 },
+            {"Road to Ruin Clear Gem (Death Route)", 4 },
+            {"Piston it Away Clear Gem (Death Route)", 5 },
+            {"Night Fight Clear Gem (Death Route)", 6 },
+            {"Spaced Out Clear Gem (All Colored Gems Path)", 7 },
+            {"Diggin' It Clear Gem (Death Route)", 8 },
+            {"Cold Hard Crash Clear Gem (Death Route)", 9 },
+            {"Sewer or Later Clear Gem (Box Gem)", 10 },
+            {"Night Fight Clear Gem (Box Gem)", 12 },
+            {"Hangin' Out Clear Gem (Box Gem)", 13 },
+            {"Snow Go Clear Gem (Box Gem)", 14 },
+            {"Ruination Clear Gem (Box Gem)", 15 },
+            {"Piston it Away Clear Gem (Box Gem)", 16 },
+            {"Snow Biz Clear Gem (Box Gem)", 17 },
+            {"Rock It Clear Gem (Box Gem)", 18 },
+            {"Cold Hard Crash Clear Gem (Box Gem)", 19 },
+            {"Diggin' It Clear Gem (Box Gem)", 21 },
+            {"Road to Ruin Clear Gem (Box Gem)", 22 },
+            {"Un-Bearable Clear Gem (Box Gem)", 23 },
+            {"Crash Dash Clear Gem (Box Gem)", 24 },
+            {"Hang Eight Clear Gem (Box Gem)", 25 },
+            {"Pack Attack Clear Gem (Box Gem)", 26 },
+            {"Crash Crush Clear Gem (Box Gem)", 27 },
+            {"Bear It Clear Gem (Box Gem)", 29 },
+            {"Turtle Woods Clear Gem (Box Gem)", 30 },
+            {"The Pits Clear Gem (Box Gem)", 31 },
+
+            {"Air Crash Clear Gem (Box Gem)", 48 },
+            {"Plant Food Clear Gem (Box Gem)", 49 },
+            {"Bear Down Clear Gem (Box Gem)", 50 },
+            {"The Eel Deal Clear Gem (Box Gem)", 51 },
+            {"Bee-Having Clear Gem (Box Gem)", 52 },
+            {"Totally Bear Clear Gem (Box Gem)", 53 },
+            {"Spaced Out Clear Gem (Box Gem)", 54 },
+            {"Totally Fly Clear Gem (Box Gem)", 55 },
+            {"Ruination Clear Gem (Green Gem Path)", 57 },
+            {"Snow Go Red Gem", 58 },
+            {"The Eel Deal Green Gem", 59 },
+            {"Bee-Having Purple Gem", 60 },
+            {"Turtle Woods Blue Gem", 61 },
+            {"Plant Food Yellow Gem", 62 },
         };
         // warp 1: 30, 14, 25, 31, 24 
 

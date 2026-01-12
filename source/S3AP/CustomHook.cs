@@ -23,7 +23,7 @@ namespace S3AP
 
         public ulong _freeAddress;
 
-        private ulong _hookSize;
+        public ulong _hookSize;
         public CustomHook(List<string> asm) { 
             _asm = asm;
             _bytes = ConvertAsm(asm);
@@ -80,6 +80,43 @@ namespace S3AP
 
             return result;
         }
+        public static string DecodeRegister(uint regNum)
+        {
+            return regNum switch
+            {
+                0 => "$zero",
+                1 => "$at",
+                2 or 3 => $"$v{regNum - 2}",
+                4 or 5 or 6 or 7 => $"$a{regNum - 4}",
+                8 or 9 or 10 or 11 or 12 or 13 or 14 or 15 => $"$t{regNum - 8}",
+                16 or 17 or 18 or 19 or 20 or 21 or 22 or 23 => $"$s{regNum - 16}",
+                29 => "$sp",
+                31 => "$ra",
+                _ => "$unknown",
+            };
+        }
+        public static void DecodeITypeInstruction(uint instruction, out string opcode, out string rs, out string rt, out string immed)
+        {
+            uint opcodeNum;
+            uint rsNum;
+            uint rtNum;
+            uint immedNum;
+            opcodeNum = (instruction >> 26) & 0x3F;
+            rsNum = (instruction >> 21) & 0x1F;
+            rtNum = (instruction >> 16) & 0x1F;
+            immedNum = (ushort)(instruction & 0xFFFF);
+            opcode = opcodeNum switch
+            {
+                0x4 => "beq",
+                0x5 => "bne",
+                0x9 => "addiu",
+                0x23 => "lw",
+                _ => "unknown",
+            };
+            rs = DecodeRegister(rsNum);
+            rt = DecodeRegister(rtNum);
+            immed = $"0x{immedNum:X}";
+        }
         private static byte[] ConvertIType(string[] instruction)
         {
             uint opcode;
@@ -103,14 +140,27 @@ namespace S3AP
                 case "addiu":
                     opcode = 0x9; //might need to flip rt and rs, but it doesn't matter right now since they are equal in our usage
                     break;
+                //case "lw":
+                //    opcode = 0x23;
+                //    break;
                 default:
                     Log.Error($"CustomHook: Unknown/unimplemented I-type instruction {instruction[0]}");
                     return [0, 0, 0, 0];
             }
             
-            rs = EncodeRegister(instruction[1]);
-            rt = EncodeRegister(instruction[2]);
+            switch (instruction[0])
+            {
+                case "addiu":
+                    rs = EncodeRegister(instruction[2]);
+                    rt = EncodeRegister(instruction[1]);
+                    break;
+                default:
+                    rs = EncodeRegister(instruction[1]);
+                    rt = EncodeRegister(instruction[2]);
 
+                    //immed = Convert.ToUInt32(instruction[3].Replace("0x", ""), 16) & 0xFFFF;
+                    break;
+            }
             immed = Convert.ToUInt32(instruction[3].Replace("0x", ""), 16) & 0xFFFF;
 
             return ConvertToBytes(opcode, rs, rt, immed);
@@ -169,15 +219,15 @@ namespace S3AP
                                 Log.Error($"CustomHook: Invalid {instruction[0]} instruction format at line {i + 1}, length was {instruction.Length}");
                                 break;
                             }
-                            if (!instruction[1].StartsWith("$t"))
-                            {
-                                Log.Error($"CustomHook: Invalid {instruction[0]} instruction register at line {i + 1} (only $t0 - $t7 are supported)");
-                                break;
-                            }
+                            //if (!instruction[1].StartsWith("$t"))
+                            //{
+                            //    Log.Error($"CustomHook: Invalid {instruction[0]} instruction register at line {i + 1} (only $t0 - $t7 are supported)");
+                            //    break;
+                            //}
                             opcode = 0xF; //lui
 
-                            byte regNum = Convert.ToByte(instruction[1].Replace("$t", ""));
-                            rt = (uint) 0x8 + regNum;
+                            //byte regNum = Convert.ToByte(instruction[1].Replace("$t", ""));
+                            rt = EncodeRegister(instruction[1]);
                             rs = 0;
 
                             instruction[2] = instruction[2].Replace("0x", "");
@@ -309,6 +359,7 @@ namespace S3AP
                     case "beq":
                     case "bne":
                     case "addiu":
+                    //case "lw":
                         bytes.AddRange(ConvertIType(instruction));
                         break;
                     default:

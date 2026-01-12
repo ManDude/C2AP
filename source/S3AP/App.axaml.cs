@@ -174,7 +174,6 @@ public partial class App : Application
         //InputLock.LockInput(InputFlag.Square);
         BaseHooks.Initialize();
 
-        
 
         Client.Connected += OnConnected;
         Client.Disconnected += OnDisconnected;
@@ -203,6 +202,7 @@ public partial class App : Application
         //    Log.Logger.Error("Failed to login.  Please check your host, name, and password.");
         //}
         Client.MonitorLocations(GameLocations);
+        CrashObjectMod.Initialize();
     }
 
     private void Client_LocationCompleted(object? sender, LocationCompletedEventArgs e)
@@ -216,7 +216,7 @@ public partial class App : Application
     {
         Log.Logger.Debug($"Item Received: {JsonConvert.SerializeObject(args.Item)}");
         //int currentHealth;
-
+        
         // when receiving a gem/crystal, just set a bit to 1 in a set part in free memory, the specific crystal/white gem doesn't matter, only the count matters
         uint bytenum = 0;
         int bitnum = 0;
@@ -238,6 +238,32 @@ public partial class App : Application
                     return;
                 } 
                 Memory.WriteBit(Addresses.CrystalsReceivedAddress + bytenum, bitnum, true);
+
+
+                //edit lift mod to update crystal count
+                if (CrashObjectMod.liftMod == null)
+                {
+                    Log.Error("Lift mod is not initialized!");
+                    return;
+                }
+                uint crystalCount = 0;
+                List<Item> items = Client.GameState.ReceivedItems;
+                foreach (Item item in items)
+                {
+                    //Log.Information($"Looking at: {item.Name} (Category: {item.Category})");
+                    if (item.Name == "Crystal")
+                    {
+                        crystalCount++;
+                    }
+                }
+                Log.Information($"Crystals counted = {crystalCount}");
+                List<byte[]> mods = new();
+                mods.Add(CustomHook.ConvertAsm([$"addiu $a0, $zero, 0x{crystalCount:X}"]).ToArray());
+                mods.Add(CustomHook.ConvertAsm([$"addiu $v1, $zero, 0x{crystalCount:X}"]).ToArray());
+
+                List<uint> modInstructionLines = [6507 - CrashObjectMod.magicOffset / 4, 6507];
+                CrashObjectMod.liftMod.EditMod(mods, modInstructionLines);
+
                 break;
             case "Clear Gem":
                 while (Memory.ReadBit(Addresses.GemsReceivedAddress + bytenum, bitnum))
@@ -277,7 +303,7 @@ public partial class App : Application
                 Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.YellowGemReceivedBit, true);
                 break;
             case "Life":
-                Log.Logger.Information("Recieving lives is not yet implemented in this Archipelago Client.");
+                Log.Logger.Information("Recieving lives is not yet implemented.");
                 break;
         }
         

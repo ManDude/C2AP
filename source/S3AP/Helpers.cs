@@ -38,27 +38,62 @@ namespace S3AP
             int bit;
             foreach (string locName in Addresses.BitOfLocation.Keys)
             {
-                address = Addresses.CrystalLocationsAddress;
-                bit = Addresses.BitOfLocation[locName];
-
-                address += (uint)(bit / 8);
-                bit = bit % 8;
-
-                if (locName.Equals("Turtle Woods Crystal"))
+                Location loc;
+                if (locName.Contains("Gem"))
                 {
-                    //debug
-                    Log.Logger.Information($"Turtle Woods Crystal location address 0x{address:X}, bit#{bit}");
+                    address = Addresses.GemLocationsAddress;
+                    bit = Addresses.BitOfLocation[locName];
+
+                    address += (uint)(bit / 8);
+                    bit = bit % 8;
+
+                    //if (!Addresses.LocationIdInApWorld.ContainsKey(locName))
+                    //{
+                    //    Log.Logger.Warning($"Location ID for {locName} not found, skipping...");
+                    //    continue;
+                    //}
+
+                    //if (locName.Equals("Turtle Woods Blue Gem"))
+                    //{
+                    //    //debug
+                    //    Log.Logger.Information($"Turtle Woods Blue Gem location address 0x{address:X}, bit#{bit}");
+                    //}
+
+                    loc = new Location
+                    {
+                        Name = locName,
+                        Address = address,
+                        AddressBit = bit,
+                        CheckType = LocationCheckType.Bit,
+                        Category = "Gem",
+                        Id = Addresses.LocationIdInApWorld[locName],
+                    };
                 }
-
-                Location loc = new Location
+                else
                 {
-                    Name = locName,
-                    Address = address,
-                    AddressBit = bit,
-                    CheckType = LocationCheckType.Bit,
-                    Category = "Crystal",
-                    Id = Addresses.LocationIdInApWorld[locName],
-                };
+                    address = Addresses.CrystalLocationsAddress;
+                    bit = Addresses.BitOfLocation[locName];
+
+                    address += (uint)(bit / 8);
+                    bit = bit % 8;
+
+                    //if (locName.Equals("Turtle Woods Crystal"))
+                    //{
+                    //    //debug
+                    //    Log.Logger.Information($"Turtle Woods Crystal location address 0x{address:X}, bit#{bit}");
+                    //}
+
+                    loc = new Location
+                    {
+                        Name = locName,
+                        Address = address,
+                        AddressBit = bit,
+                        CheckType = LocationCheckType.Bit,
+                        Category = "Crystal",
+                        Id = Addresses.LocationIdInApWorld[locName],
+                    };
+                }
+                    
                 locations.Add(loc);
             }
             
