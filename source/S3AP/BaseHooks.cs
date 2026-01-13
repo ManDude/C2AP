@@ -9,7 +9,7 @@ namespace S3AP
 {
     internal class BaseHooks
     {
-        private static CustomHook? PauseMenuItems;
+        private static CustomHook? ApItemsHook;
         private static CustomHook? CenterLiftHook1;
         private static CustomHook? CenterLiftHook2;
         private static CustomHook? CenterLiftHook3;
@@ -21,14 +21,16 @@ namespace S3AP
             uint gemAddressDelta = Addresses.GemLocationsAddress - Addresses.GemsReceivedAddress;
             uint offset = 0x80000000;
 
-            PauseMenuItems = new CustomHook([
+            
+
+            ApItemsHook = new CustomHook([
                 "addiu $sp, $sp, 0xFFF0",
                 "sw $t0, 0x4($sp)",
                 "sw $t1, 0x8($sp)",
                 "la $t0, 0x8005f418", //address of "paused"
                 "lw $t1, 0($t0)",
                 "nop", //load delay
-                "beq $t1 $zero, 0x11", //"bne $t0 $zero, 0x8", //"beq $t1 $zero, 0x8", //branch to exit
+                "beq $t1 $zero, 0x12", //"bne $t0 $zero, 0x8", //"beq $t1 $zero, 0x8", //branch to colored gem check
                 $"la $t0, 0x{Addresses.CrystalLocationsAddress + offset:X}",
                 "beq $v0 $t0, 0x2", //branch to eval for crystals
                 "addiu $t0, $t0, 0x4",
@@ -36,22 +38,44 @@ namespace S3AP
                 //eval for crystals
                 $"la $t1, 0x{crystalAddressDelta:X}",
                 "subu $v0, $v0, $t1",
-                "beq $zero $zero, 0x8", //branch to exit
+                "beq $zero $zero, 0x1e", //branch to exit
                 //check gems
                 $"la $t0, 0x{Addresses.GemLocationsAddress + offset:X}",
                 "beq $v0 $t0, 0x2", //branch to eval for gems
                 "addiu $t0, $t0, 0x4",
-                "bne $v0 $t0, 0x3", //branch to exit
+                "bne $v0 $t0, 0x19", //branch to exit
                 //eval for gems
                 $"la $t1, 0x{gemAddressDelta:X}",
                 "subu $v0, $v0, $t1",
+                "beq $zero $zero, 0x15", //branch to exit
+                //colored gem check
+                $"la $t0, 0x{Addresses.GemLocationsAddress + 0x4 + offset:X}",
+                "bne $v0 $t0, 0x12", //branch to exit
+                $"la $t1, 0x{Addresses.LevelIdAddress + offset:X}",
+                "lw $t1, 0($t1)",
+                "addiu $t0, $zero, 0x1900", //Hang Eight
+                "beq $t1, $t0, 0xb", //branch to get new gem address
+                "addiu $t0, $zero, 0x1100", //Snow Biz
+                "beq $t1, $t0, 0x9", //branch to get new gem address
+                "addiu $t0, $zero, 0x0A00", //Sewer or Later
+                "beq $t1, $t0, 0x7", //branch to get new gem address
+                "addiu $t0, $zero, 0x0F00", //Ruination
+                "beq $t1, $t0, 0x5", //branch to get new gem address
+                "addiu $t0, $zero, 0x1000", //Piston It Away
+                "beq $t1, $t0, 0x3", //branch to get new gem address
+                "nop",
+                "beq $zero $zero, 0x3", //branch to exit
+                "nop",
+                //get new gem address
+                $"la $v0, 0x{Addresses.GemLocationsWithReceivedColoredGemsAddress + 0x4 + offset:X}",
                 //exit
                 "lw $t0, 0x4($sp)",
                 "lw $t1, 0x8($sp)",
                 "addiu $sp, $sp, 0x10",
             ]);
+            //0x19, 0x11, 0x0A, 0x0F, 0x10
 
-            PauseMenuItems.InsertHook(0x3A8C0, 0xf030);
+            ApItemsHook.InsertHook(0x3A8C0, 0xf030);
 
             //uint address = CrashObject.FindObjectAddress(36, 8);
             //uint bytecodeAddress = CrashObject.GetGoolBytecodeAddressFromObject(address);

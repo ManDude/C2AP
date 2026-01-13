@@ -66,6 +66,7 @@ namespace S3AP
                 }
             };
             modRefreshTimer.Enabled = true;
+            Log.Information($"Lift mod has been initialized");
         }
         public CrashObjectMod(uint type, uint subtype, List<byte[]> mods, List<uint> modInstructionLines)
         {
@@ -103,7 +104,7 @@ namespace S3AP
         }
         public void RefreshMod() //this method is be called on a timer
         {
-            if (Memory.ReadByte(Addresses.LevelIdAddress) != _levelId)
+            if (Memory.ReadByte(Addresses.LevelIdAddress+0x1) != _levelId)
             {
                 return;
             }

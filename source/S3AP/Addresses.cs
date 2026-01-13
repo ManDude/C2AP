@@ -13,7 +13,12 @@ namespace S3AP
         public const int PurpleGemReceivedBit = 4;
         public const int BlueGemReceivedBit = 5;
         public const int YellowGemReceivedBit = 6;
-        
+
+        public const uint GemLocationsWithReceivedColoredGemsAddress = 0x0000EA20; //64 bits
+        public const uint ColoredGemOffset = 0x7;
+        public const byte ColoredGemMask =        0b01111100;
+        public const byte ColoredGemMaskNegated = 0b10000011;
+
         public const uint CrystalLocationsAddress = 0x0006D03C; //64 bits
 
         //public const uint WasSwappedAddress = 0x0000EA1C; //32 bit boolean
@@ -21,7 +26,7 @@ namespace S3AP
 
         public const uint GemLocationsAddress = 0x0006CEC0;
 
-        public const uint LevelIdAddress = 0x6ce09; //8 bits (probably)
+        public const uint LevelIdAddress = 0x6ce08; //32 bits (hopefully)
 
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {

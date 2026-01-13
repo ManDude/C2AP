@@ -205,9 +205,21 @@ public partial class App : Application
         CrashObjectMod.Initialize();
     }
 
+    private void UpdateGemLocationsChecked()
+    {
+        byte[] gemFlags = Memory.ReadByteArray(Addresses.GemLocationsAddress, 8);
+        gemFlags[Addresses.ColoredGemOffset] &= Addresses.ColoredGemMaskNegated; //clear out colored gem bits
+        byte receivedColoredGemFlags = Memory.ReadByte(Addresses.ColoredGemReceivedAddress);
+        receivedColoredGemFlags &= Addresses.ColoredGemMask; //clear out clear gem bits
+
+        gemFlags[Addresses.ColoredGemOffset] |= receivedColoredGemFlags; //set colored gem bits from received items
+        Memory.WriteByteArray(Addresses.GemLocationsWithReceivedColoredGemsAddress, gemFlags);
+    }
+
     private void Client_LocationCompleted(object? sender, LocationCompletedEventArgs e)
     {
         if (Client.GameState == null) return;
+        UpdateGemLocationsChecked();
         //var currentEggs = CalculateCurrentEggs();
         CheckGoalCondition();
     }
@@ -289,21 +301,26 @@ public partial class App : Application
                 break;
             case "Red Gem":
                 Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.RedGemReceivedBit, true);
+                Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.RedGemReceivedBit, true);
                 break;
             case "Green Gem":
                 Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.GreenGemReceivedBit, true);
+                Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.GreenGemReceivedBit, true);
                 break;
             case "Purple Gem":
                 Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.PurpleGemReceivedBit, true);
+                Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.PurpleGemReceivedBit, true);
                 break;
             case "Blue Gem":
                 Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.BlueGemReceivedBit, true);
+                Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.BlueGemReceivedBit, true);
                 break;
             case "Yellow Gem":
                 Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.YellowGemReceivedBit, true);
+                Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.YellowGemReceivedBit, true);
                 break;
             case "Life":
-                Log.Logger.Information("Recieving lives is not yet implemented.");
+                Log.Logger.Information("Receiving lives is not yet implemented.");
                 break;
         }
         
