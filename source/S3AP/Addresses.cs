@@ -28,6 +28,9 @@ namespace S3AP
 
         public const uint LevelIdAddress = 0x6ce08; //32 bits (hopefully)
 
+        //crash
+        public const uint LivesOffset = 0x145;
+
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {
             //crystals

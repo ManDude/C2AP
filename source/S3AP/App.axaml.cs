@@ -19,6 +19,7 @@ using ReactiveUI;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
@@ -119,6 +120,9 @@ public partial class App : Application
                 Log.Logger.Information("Hints for found locations will be displayed.  Type 'useQuietHints' to show them.");
                 _useQuietHints = false;
                 break;
+            case "exec":
+                CrashObject.FindObjectAddress(0, 0);
+                break;
         }
         string[] args = command.Split(' ');
         if (args.Length == 2)
@@ -134,6 +138,21 @@ public partial class App : Application
                 Memory.WriteBit(address, bits, true);
                 Log.Logger.Information($"Checking location at crystal address 0x{address:X}, bit#{bits}");
             }
+            if (args[0] == "snapshot")
+            {
+                string filename = $"C:\\Users\\Deoxm\\Desktop\\AP folder\\memorysnapshot_{args[1]}.mem";
+                Log.Logger.Information($"Creating memory snapshot at {filename}");
+                if (File.Exists(filename))
+                {
+                    File.Delete(filename);
+                }
+                using (FileStream fs = File.Create(filename))
+                {
+                    byte[] memoryDump = Memory.ReadByteArray(0, 0b1000000000000000000000);
+                    fs.Write(memoryDump, 0, memoryDump.Length);
+                }
+            }
+            
         }
     }
     private async void Context_ConnectClicked(object? sender, ConnectClickedEventArgs e)
@@ -320,7 +339,16 @@ public partial class App : Application
                 Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.YellowGemReceivedBit, true);
                 break;
             case "Life":
-                Log.Logger.Information("Receiving lives is not yet implemented.");
+                //Log.Logger.Information("Receiving lives is not yet implemented.");
+                uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                uint lives = Memory.ReadByte(crashAddress + Addresses.LivesOffset);
+                lives++;
+                if (lives > 0xFF)
+                {
+                    lives = 0xFF;
+                }
+                Log.Information($"lives are now {lives}");
+                Memory.WriteByte(crashAddress + Addresses.LivesOffset, (byte)lives);
                 break;
         }
         
