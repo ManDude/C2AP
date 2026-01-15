@@ -28,7 +28,11 @@ namespace S3AP
 
         public const uint LevelIdAddress = 0x6ce08; //32 bits (hopefully)
 
-        //crash
+        public const uint LevelExitsAddress = 0x6ce74; //64 bits
+        public const uint SecretExitsAddress = 0x6ce79;
+
+        public const uint LivesGlobalAddress = 0x6ce69; //8 bits
+        //crash object
         public const uint LivesOffset = 0x145;
 
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
@@ -90,20 +94,27 @@ namespace S3AP
             {"Turtle Woods Clear Gem (Box Gem)", 30 },
             {"The Pits Clear Gem (Box Gem)", 31 },
 
-            {"Air Crash Clear Gem (Box Gem)", 48 },
-            {"Plant Food Clear Gem (Box Gem)", 49 },
-            {"Bear Down Clear Gem (Box Gem)", 50 },
-            {"The Eel Deal Clear Gem (Box Gem)", 51 },
-            {"Bee-Having Clear Gem (Box Gem)", 52 },
-            {"Totally Bear Clear Gem (Box Gem)", 53 },
-            {"Spaced Out Clear Gem (Box Gem)", 54 },
-            {"Totally Fly Clear Gem (Box Gem)", 55 },
+            {"Air Crash Clear Gem (Box Gem)", 32 },
+            {"Plant Food Clear Gem (Box Gem)", 33 },
+            {"Bear Down Clear Gem (Box Gem)", 34 },
+            {"The Eel Deal Clear Gem (Box Gem)", 35 },
+            {"Bee-Having Clear Gem (Box Gem)", 36 },
+            {"Totally Bear Clear Gem (Box Gem)", 37 },
+            {"Spaced Out Clear Gem (Box Gem)", 38 },
+            {"Totally Fly Clear Gem (Box Gem)", 39 },
             {"Ruination Clear Gem (Green Gem Path)", 57 },
             {"Snow Go Red Gem", 58 },
             {"The Eel Deal Green Gem", 59 },
             {"Bee-Having Purple Gem", 60 },
             {"Turtle Woods Blue Gem", 61 },
             {"Plant Food Yellow Gem", 62 },
+
+            //secret exits
+            { "Air Crash Secret Exit", 3 },
+            { "Hangin' Out Secret Exit", 7 },
+            { "Diggin' It Secret Exit", 5 },
+            { "Un-Bearable Secret Exit", 6 },
+            { "Bear Down Secret Exit", 4 },
         };
         // warp 1: 30, 14, 25, 31, 24 
 
@@ -211,10 +222,83 @@ namespace S3AP
 
             { "Totally Bear Clear Gem (Box Gem)", 71 },
             { "Totally Fly Clear Gem (Box Gem)", 72 },
+
+          
+            { "Turtle Woods Exit", 73 },
+            { "Snow Go Exit", 74 },
+            { "Hang Eight Exit", 75 },
+            { "The Pits Exit", 76 },
+            { "Crash Dash Exit", 77 },
+            { "Snow Biz Exit", 79 },
+            { "Air Crash Exit", 80 },
+            { "Bear It Exit", 81 },
+            { "Crash Crush Exit", 82 },
+            { "The Eel Deal Exit", 83 },
+            { "Plant Food Exit", 85 },
+            { "Sewer or Later Exit", 86 },
+            { "Bear Down Exit", 87 },
+            { "Road to Ruin Exit", 88 },
+            { "Un-Bearable Exit", 89 },
+            { "Hangin' Out Exit", 91 },
+            { "Diggin' It Exit", 92 },
+            { "Cold Hard Crash Exit", 93 },
+            { "Ruination Exit", 94 },
+            { "Bee-Having Exit", 95 },
+            { "Piston it Away Exit", 97 },
+            { "Rock It Exit", 98 },
+            { "Night Fight Exit", 99 },
+            { "Pack Attack Exit", 100 },
+            { "Spaced Out Exit", 101 },
+            { "Totally Bear Exit", 102 },
+            { "Totally Fly Exit", 103 },
+
+            // Secret exits
+            { "Air Crash Secret Exit", 104 },
+            { "Hangin' Out Secret Exit", 105 },
+            { "Diggin' It Secret Exit", 106 },
+            { "Un-Bearable Secret Exit", 107 },
+            { "Bear Down Secret Exit", 108 },
+
+
         };
 
+        public static Dictionary<string, int> levelNameToId = new Dictionary<string, int>
+        {
+            { "Turtle Woods", 0x1E },
+            { "Snow Go", 0x0E },
+            { "Hang Eight", 0x19 },
+            { "The Pits", 0x1F },
+            { "Crash Dash", 0x18 },
+            { "Ripper Roo", 0x06 },
+            { "Snow Biz", 0x11 },
+            { "Air Crash", 0x20 },
+            { "Bear It", 0x1D },
+            { "Crash Crush", 0x1B },
+            { "The Eel Deal", 0x23 },
+            { "Komodo Brothers", 0x08 },
+            { "Plant Food", 0x21 },
+            { "Sewer or Later", 0x0A },
+            { "Bear Down", 0x22 },
+            { "Road to Ruin", 0x16 },
+            { "Un-Bearable", 0x17 },
+            { "Tiny Tiger", 0x03 },
+            { "Hangin' Out", 0x0D },
+            { "Diggin' It", 0x15 },
+            { "Cold Hard Crash", 0x13 },
+            { "Ruination", 0x0F },
+            { "Bee-Having", 0x24 },
+            { "Dr. N. Gin", 0x09 },
+            { "Piston it Away", 0x10 },
+            { "Rock It", 0x12 },
+            { "Night Fight", 0x0C },
+            { "Pack Attack", 0x1A },
+            { "Spaced Out", 0x26 },
+            { "Dr. Neo Cortex", 0x07 },
+            { "Totally Bear", 0x25 },
+            { "Totally Fly", 0x27 },
+        };
 
     }
 
-    
+
 }

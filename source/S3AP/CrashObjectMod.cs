@@ -46,7 +46,7 @@ namespace S3AP
                 }
             }
 
-            Log.Information($"Crystals counted = {crystalCount}");
+            Log.Debug($"Crystals counted = {crystalCount}");
 
             mods.Add(CustomHook.ConvertAsm([$"addiu $a0, $zero, 0x{crystalCount:X}"]).ToArray());
             mods.Add(CustomHook.ConvertAsm([$"addiu $v1, $zero, 0x{crystalCount:X}"]).ToArray());
@@ -66,7 +66,7 @@ namespace S3AP
                 }
             };
             modRefreshTimer.Enabled = true;
-            Log.Information($"Lift mod has been initialized");
+            Log.Debug($"Lift mod has been initialized");
         }
         public CrashObjectMod(uint type, uint subtype, List<byte[]> mods, List<uint> modInstructionLines)
         {
@@ -144,7 +144,7 @@ namespace S3AP
                 instructionAddress = byteCodeAddress + (_modInstructionLines[i] * 0x4);
                 if (Memory.ReadUInt(instructionAddress) != Convert.ToUInt32(_mods[i].ToArray()))
                 {
-                    Log.Information("instruction integrity failed");
+                    Log.Debug("instruction integrity failed");
                     return false;
                 }
             }

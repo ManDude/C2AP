@@ -29,7 +29,7 @@ namespace S3AP
             uint objAddress = 0;
             while (true)
             {
-                Log.Information($"Checking list header at 0x{currentListHeader:X}");
+                Log.Debug($"Checking list header at 0x{currentListHeader:X}");
                 //Log.Information($"Header value is {Memory.ReadUInt(currentListHeader)}");
                 //Log.Information($"Header +0x4 value is {Memory.ReadUInt(currentListHeader + 0x4)}");
                 //Log.Information($"Header -0x4 value is {Memory.ReadUInt(currentListHeader - 0x4)}");
@@ -55,20 +55,20 @@ namespace S3AP
 
         private static uint FindObjectRecursive(uint objAddress, uint type, uint subtype)
         {
-            Log.Information($"Checking object at address 0x{objAddress:X}");
+            Log.Debug($"Checking object at address 0x{objAddress:X}");
             if (objAddress == cacheOffset || objAddress == 0) return 0; //check for null pointer
 
             if (Memory.ReadUInt(objAddress) == 0) //check object header
             {
-                Log.Information($"Found a free object in list at 0x{objAddress:X}, skipping...");
+                Log.Debug($"Found a free object in list at 0x{objAddress:X}, skipping...");
                 return 0;
             }
 
             //Log.Information($"Object entity ID is {Memory.ReadUInt(objAddress + entityIdOffset)}");
-            Log.Information($"Object subtype is {Memory.ReadUInt(objAddress + subtypeOffset)}");
+            Log.Debug($"Object subtype is {Memory.ReadUInt(objAddress + subtypeOffset)}");
             if (Memory.ReadUInt(objAddress + subtypeOffset) == subtype)
             {
-                Log.Information($"Found object with subtype {subtype} at address 0x{objAddress:X}");
+                Log.Debug($"Found object with subtype {subtype} at address 0x{objAddress:X}");
 
                 //check type
                 //bool typeMatches = false;
@@ -80,18 +80,18 @@ namespace S3AP
                 else
                 {
                     uint itemAddress = GetItemAddressFromEntry(goolEntryAddress, 0);
-                    Log.Information($"Gool entry address is 0x{goolEntryAddress:X}, first item address is 0x{itemAddress:X}");
+                    Log.Debug($"Gool entry address is 0x{goolEntryAddress:X}, first item address is 0x{itemAddress:X}");
                     if (Memory.ReadUInt(itemAddress) == type)
                     {
-                        Log.Information($"Found object with type {type} at address 0x{objAddress:X}");
+                        Log.Debug($"Found object with type {type} at address 0x{objAddress:X}");
                         return objAddress;
                     }
-                    Log.Information($"Object type {Memory.ReadUInt(itemAddress)} does not match desired type {type}");
+                    Log.Debug($"Object type {Memory.ReadUInt(itemAddress)} does not match desired type {type}");
                 }
             }
 
             uint childObjAddress = Memory.ReadUInt(objAddress + childOffset) - cacheOffset; //first child object
-            Log.Information($"Recursing into child object at address 0x{childObjAddress:X}");
+            Log.Debug($"Recursing into child object at address 0x{childObjAddress:X}");
             uint foundAddress = FindObjectRecursive(childObjAddress, type, subtype);
             if (foundAddress != cacheOffset && foundAddress != 0)
             {
@@ -99,7 +99,7 @@ namespace S3AP
             }
             
             uint siblingObjAddress = Memory.ReadUInt(objAddress + siblingOffset) - cacheOffset; //next sibling object
-            Log.Information($"Recursing into sibling object at address 0x{siblingObjAddress:X}");
+            Log.Debug($"Recursing into sibling object at address 0x{siblingObjAddress:X}");
             return FindObjectRecursive(siblingObjAddress, type, subtype);
             
 
@@ -127,7 +127,7 @@ namespace S3AP
                 return 0;
             }
             uint bytecodeAddress = GetItemAddressFromEntry(goolEntryAddress, 1); //second item is bytecode
-            Log.Information($"Gool bytecode address is 0x{bytecodeAddress:X}");
+            Log.Debug($"Gool bytecode address is 0x{bytecodeAddress:X}");
             return bytecodeAddress;
         }
     }

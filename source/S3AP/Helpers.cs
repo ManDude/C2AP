@@ -36,67 +36,73 @@ namespace S3AP
             List<ILocation> locations = new List<ILocation>();
             uint address;
             int bit;
-            foreach (string locName in Addresses.BitOfLocation.Keys)
+            string category;
+            foreach (string locName in Addresses.LocationIdInApWorld.Keys)
             {
                 Location loc;
                 if (locName.Contains("Gem"))
                 {
                     address = Addresses.GemLocationsAddress;
                     bit = Addresses.BitOfLocation[locName];
-
-                    address += (uint)(bit / 8);
-                    bit = bit % 8;
-
-                    //if (!Addresses.LocationIdInApWorld.ContainsKey(locName))
-                    //{
-                    //    Log.Logger.Warning($"Location ID for {locName} not found, skipping...");
-                    //    continue;
-                    //}
-
-                    //if (locName.Equals("Turtle Woods Blue Gem"))
-                    //{
-                    //    //debug
-                    //    Log.Logger.Information($"Turtle Woods Blue Gem location address 0x{address:X}, bit#{bit}");
-                    //}
-
-                    loc = new Location
-                    {
-                        Name = locName,
-                        Address = address,
-                        AddressBit = bit,
-                        CheckType = LocationCheckType.Bit,
-                        Category = "Gem",
-                        Id = Addresses.LocationIdInApWorld[locName],
-                    };
+                    category = "Gem";
                 }
-                else
+                else if (locName.Contains("Crystal"))
                 {
                     address = Addresses.CrystalLocationsAddress;
                     bit = Addresses.BitOfLocation[locName];
-
-                    address += (uint)(bit / 8);
-                    bit = bit % 8;
-
-                    //if (locName.Equals("Turtle Woods Crystal"))
-                    //{
-                    //    //debug
-                    //    Log.Logger.Information($"Turtle Woods Crystal location address 0x{address:X}, bit#{bit}");
-                    //}
-
-                    loc = new Location
-                    {
-                        Name = locName,
-                        Address = address,
-                        AddressBit = bit,
-                        CheckType = LocationCheckType.Bit,
-                        Category = "Crystal",
-                        Id = Addresses.LocationIdInApWorld[locName],
-                    };
+                    category = "Crystal";
                 }
-                    
+                else if (locName.Contains("Secret"))
+                {
+                    address = Addresses.SecretExitsAddress;
+                    bit = Addresses.BitOfLocation[locName];
+                    category = "Secret Exit";
+                }
+                else if (locName.Contains("Exit"))
+                {
+                    address = Addresses.LevelExitsAddress;
+                    bit = Addresses.levelNameToId[locName.Replace(" Exit", "")];
+                    category = "Exit";
+                }
+                else //if (locName.Contains("Defeated"))
+                {
+                    address = Addresses.LevelExitsAddress;
+                    bit = Addresses.levelNameToId[locName.Replace(" Defeated", "")];
+                    category = "Boss Defeated";
+                }
+                
+
+                address += (uint)(bit / 8);
+                bit = bit % 8;
+
+                loc = new Location
+                {
+                    Name = locName,
+                    Address = address,
+                    AddressBit = bit,
+                    CheckType = LocationCheckType.Bit,
+                    Category = category,
+                    Id = Addresses.LocationIdInApWorld[locName],
+                };
                 locations.Add(loc);
             }
-            
+
+            //Adding these "fake" locations so that CheckGoalCondition() can be executed
+            locations.Add(new Location
+            {
+                Name = "Normal Ending",
+                Address = Addresses.LevelIdAddress,
+                CheckType = LocationCheckType.Int,
+                CheckValue = "10496" //0x2900 == normal ending level id
+            });
+            locations.Add(new Location
+            {
+                Name = "100% Ending",
+                Address = Addresses.LevelIdAddress,
+                CheckType = LocationCheckType.Int,
+                CheckValue = "10240" //0x2800 == 100% ending level id
+            });
+
             return locations;
         }
 

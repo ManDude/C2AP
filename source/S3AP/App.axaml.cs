@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reactive.Concurrency;
 using System.Reflection;
 using System.Runtime.InteropServices.Marshalling;
@@ -341,26 +342,35 @@ public partial class App : Application
             case "Life":
                 //Log.Logger.Information("Receiving lives is not yet implemented.");
                 uint crashAddress = CrashObject.FindObjectAddress(0, 0);
-                uint lives = Memory.ReadByte(crashAddress + Addresses.LivesOffset);
-                lives++;
-                if (lives > 0xFF)
+                if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {
-                    lives = 0xFF;
+                    IncrementByte(crashAddress + Addresses.LivesOffset);
                 }
-                Log.Information($"lives are now {lives}");
-                Memory.WriteByte(crashAddress + Addresses.LivesOffset, (byte)lives);
+                IncrementByte(Addresses.LivesGlobalAddress);
                 break;
         }
-        
     }
 
-    
+    private static void IncrementByte(uint address)
+    {
+        uint data = Memory.ReadByte(address);
+        data++;
+        if (data > 0xFF) 
+            data = 0xFF;
+        Memory.WriteByte(address, (byte) data);
+    }
 
     private static void CheckGoalCondition()
     {
         if (_hasSubmittedGoal)
         {
             return;
+        }
+        byte levelid = Memory.ReadByte(Addresses.LevelIdAddress + 0x1);
+        if (levelid == 0x29 || levelid == 0x28)
+        {
+            Client.SendGoalCompletion();
+            _hasSubmittedGoal = true;
         }
     }
     private static async void RunLagTrap()
