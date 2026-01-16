@@ -68,7 +68,7 @@ namespace C2AP
                 "beq $t1, $t0, 0x7", //branch to get new gem address
                 "addiu $t0, $zero, 0x0F00", //Ruination
                 "beq $t1, $t0, 0x5", //branch to get new gem address
-                "addiu $t0, $zero, 0x1000", //Piston It Away
+                "addiu $t0, $zero, 0x2600", //Spaced Out
                 "beq $t1, $t0, 0x3", //branch to get new gem address
                 "nop",
                 "beq $zero $zero, 0x3", //branch to exit

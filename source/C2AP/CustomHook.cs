@@ -438,15 +438,15 @@ namespace C2AP
                 jmpto.Add(0x00);
             }
             Memory.WriteByteArray(_targetAddress, jmpto.ToArray());
-            Log.Information($"jmpto: {Convert.ToHexString([jmpto[0], jmpto[1], jmpto[2], jmpto[3]])}");
+            Log.Debug($"jmpto: {Convert.ToHexString([jmpto[0], jmpto[1], jmpto[2], jmpto[3]])}");
 
             Memory.WriteByteArray(_freeAddress, first);
-            Log.Information($"first: {Convert.ToHexString([first[0], first[1], first[2], first[3]])}");
+            Log.Debug($"first: {Convert.ToHexString([first[0], first[1], first[2], first[3]])}");
 
             Memory.WriteByteArray(_freeAddress + (ulong)_targetInstructionSize, _bytes.ToArray());
             Memory.WriteByteArray(_freeAddress + (ulong)_targetInstructionSize + (ulong) _bytes.Count, jmpBack.ToArray());
 
-            Log.Information("Hook is in");
+            Log.Debug("Hook is in");
             
         }
 

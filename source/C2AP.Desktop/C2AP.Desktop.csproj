@@ -11,7 +11,7 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <!-- Display name -->
-    <ApplicationTitle>S3AP</ApplicationTitle>
+    <ApplicationTitle>C2AP</ApplicationTitle>
     <!-- App Identifier -->
     <ApplicationId>com.arsonassassin.s3ap</ApplicationId>
     <!-- Versions -->
@@ -35,6 +35,6 @@
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.8" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\S3AP\C2AP.csproj" />
+    <ProjectReference Include="..\C2AP\C2AP.csproj" />
   </ItemGroup>
 </Project>
