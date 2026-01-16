@@ -10,10 +10,10 @@ namespace S3AP
     internal class BaseHooks
     {
         private static CustomHook? ApItemsHook;
-        private static CustomHook? CenterLiftHook1;
-        private static CustomHook? CenterLiftHook2;
-        private static CustomHook? CenterLiftHook3;
-        private static CustomHook? CenterLiftHook4;
+        //private static CustomHook? CenterLiftHook1;
+        //private static CustomHook? CenterLiftHook2;
+        //private static CustomHook? CenterLiftHook3;
+        //private static CustomHook? CenterLiftHook4;
 
         public static void Initialize()
         {
@@ -21,7 +21,14 @@ namespace S3AP
             uint gemAddressDelta = Addresses.GemLocationsAddress - Addresses.GemsReceivedAddress;
             uint offset = 0x80000000;
 
-            
+            //make sure first that the hook is removed if initialize is called multiple times in a row
+            if (ApItemsHook != null)
+            {
+                ApItemsHook.RemoveHook();
+            }
+            //make sure nothing is left over in the "free" addresses
+
+            Memory.WriteByteArray(0xf000, new byte[0xfff]);
 
             ApItemsHook = new CustomHook([
                 "addiu $sp, $sp, 0xFFF0",
@@ -76,7 +83,7 @@ namespace S3AP
             //0x19, 0x11, 0x0A, 0x0F, 0x10
 
             ApItemsHook.InsertHook(0x3A8C0, 0xf030);
-
+            App.SyncGameState();
             //uint address = CrashObject.FindObjectAddress(36, 8);
             //uint bytecodeAddress = CrashObject.GetGoolBytecodeAddressFromObject(address);
 
@@ -212,6 +219,11 @@ namespace S3AP
             //0x3A8C4 doesn't work
 
             //PauseMenuItems.InsertHook(0x4A8E0, 0xf030);
+        }
+        public static void UnInitialize()
+        {
+            if ( ApItemsHook != null )
+                ApItemsHook.RemoveHook();
         }
     }
 }

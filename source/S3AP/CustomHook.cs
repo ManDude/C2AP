@@ -427,7 +427,7 @@ namespace S3AP
 
             if (freeBytes.Any(b => b != 0x00))
             {
-                Log.Error($"CustomHook: Free space at 0x{_freeAddress:X} is not empty!");
+                Log.Debug($"CustomHook: Free space at 0x{_freeAddress:X} is not empty!");
                 return;
             }
 

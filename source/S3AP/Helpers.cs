@@ -14,6 +14,7 @@ namespace S3AP
     public class Helpers
     {
         private static GameStatus lastNonZeroStatus = GameStatus.Spawning;
+        private static bool lastInGameStatus = false;
         public static string OpenEmbeddedResource(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -27,7 +28,25 @@ namespace S3AP
         
         public static bool IsInGame()
         {
-            return true;
+            //Log.Debug($"Text: {Addresses.StaticText}");
+            //Log.Debug($"Text: {Memory.ReadString(Addresses.StaticTextAddress, 0x50)}");
+            if (Addresses.StaticText.Contains(Memory.ReadString(Addresses.StaticTextAddress, 0x50)))
+            {
+                //Log.Debug($"Text: true");
+                if (!lastInGameStatus)
+                {
+                    BaseHooks.Initialize();
+                }
+                lastInGameStatus = true;
+                return true;
+            }
+            //Log.Debug($"Text: false");
+            if (lastInGameStatus)
+            {
+                BaseHooks.UnInitialize();
+            }
+            lastInGameStatus = false;
+            return false;
         }
         
         public static List<ILocation> BuildLocationList()

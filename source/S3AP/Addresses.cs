@@ -32,6 +32,8 @@ namespace S3AP
         public const uint SecretExitsAddress = 0x6ce79;
 
         public const uint LivesGlobalAddress = 0x6ce69; //8 bits
+        public const uint StaticTextAddress = 0x5ce1c;
+        public const string StaticText = "Library Programs (c) 1993-1997 Sony Computer Entertainment Inc., All Rights Reserved";
         //crash object
         public const uint LivesOffset = 0x145;
 

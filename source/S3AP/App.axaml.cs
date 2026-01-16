@@ -258,7 +258,7 @@ public partial class App : Application
         CheckGoalCondition();
     }
 
-    private static void SyncGameState()
+    public static void SyncGameState()
     {
         if (Client.GameState == null) return;
 
@@ -270,7 +270,7 @@ public partial class App : Application
             Log.Debug($"address: {location.Address:X}, bit: {location.AddressBit}");
             Memory.WriteBit(location.Address, location.AddressBit, true);
 
-            if (location.Address != Addresses.GemLocationsAddress + Addresses.ColoredGemOffset || (location.AddressBit & Addresses.ColoredGemMask) == 0)
+            if (location.Address != Addresses.GemLocationsAddress + Addresses.ColoredGemOffset || ((0x1 << location.AddressBit) & Addresses.ColoredGemMask) == 0)
             {
                 uint offset = (uint) location.Address - Addresses.GemLocationsAddress;
                 Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + offset, location.AddressBit, true);
@@ -310,7 +310,7 @@ public partial class App : Application
         //update center lift with current crystalCount
         if (CrashObjectMod.liftMod == null)
         {
-            Log.Error("Lift mod is not initialized!");
+            Log.Debug("Lift mod is not initialized!");
         }
         else
         {

@@ -47,7 +47,7 @@ namespace S3AP
                 currentListHeader += 0x8; //next list header
             }
 
-            Log.Warning($"Could not find object with type {type}, subtype {subtype} returning");
+            Log.Debug($"Could not find object with type {type}, subtype {subtype} returning");
 
 
             return 0;
