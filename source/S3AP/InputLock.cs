@@ -2,7 +2,7 @@
 using System;
 using System.Net;
 
-namespace S3AP
+namespace C2AP
 {
     [Flags]
     internal enum InputFlag : int

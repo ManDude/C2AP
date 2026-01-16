@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace S3AP
+namespace C2AP
 {
     public static class Addresses
     {

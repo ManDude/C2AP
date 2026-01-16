@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11222.15 d18.0
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S3AP", "S3AP.csproj", "{A5593C4D-1ED8-FDB6-63C9-7AA55B576DFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C2AP", "C2AP.csproj", "{A5593C4D-1ED8-FDB6-63C9-7AA55B576DFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S3AP.Desktop", "..\S3AP.Desktop\S3AP.Desktop.csproj", "{B2E5B83A-2583-3803-7ECE-FA172FE11C43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C2AP.Desktop", "..\S3AP.Desktop\C2AP.Desktop.csproj", "{B2E5B83A-2583-3803-7ECE-FA172FE11C43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

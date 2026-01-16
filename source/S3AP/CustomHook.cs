@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace S3AP
+namespace C2AP
 {
     internal class CustomHook
     {

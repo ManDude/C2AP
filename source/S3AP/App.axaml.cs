@@ -32,11 +32,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using static S3AP.Models.Enums;
 using Location = Archipelago.Core.Models.Location;
 using Timer = System.Timers.Timer;
 
-namespace S3AP;
+namespace C2AP;
 
 public partial class App : Application
 {
@@ -44,9 +43,7 @@ public partial class App : Application
     public static ArchipelagoClient Client { get; set; }
     public static List<ILocation> GameLocations { get; set; }
     private static readonly object _lockObject = new object();
-    private static Queue<string> _cosmeticEffects { get; set; }
     private static Dictionary<string, string> _hintsList { get; set; }
-    private static byte _sparxUpgrades { get; set; }
     private static bool _hasSubmittedGoal { get; set; }
     private static bool _useQuietHints { get; set; }
 
@@ -88,11 +85,10 @@ public partial class App : Application
         };
         Context.ConnectButtonEnabled = true;
         _hintsList = null;
-        _sparxUpgrades = 0;
         _hasSubmittedGoal = false;
         _useQuietHints = true;
-        Log.Logger.Information("Hello World");
-        Log.Logger.Information("This Archipelago Client is compatible only with the NTSC-U 1.1 release of Spyro 3 (North America Greatest Hits version).");
+        //Log.Logger.Information("Hello World");
+        Log.Logger.Information("This Archipelago Client is compatible only with the Crash Bandicoot 2 Europe (PAL) Release");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
         //CustomHook blockCircle = new CustomHook([
@@ -208,7 +204,6 @@ public partial class App : Application
             return;
         }
         GameLocations = Helpers.BuildLocationList();
-        _cosmeticEffects = new Queue<string>();
         Client.LocationCompleted += Client_LocationCompleted;
         Client.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
         Client.MessageReceived += Client_MessageReceived;
@@ -368,11 +363,6 @@ public partial class App : Application
     private async void ItemReceived(object? o, ItemReceivedEventArgs args)
     {
         Log.Logger.Debug($"Item Received: {JsonConvert.SerializeObject(args.Item)}");
-        //int currentHealth;
-        
-        // when receiving a gem/crystal, just set a bit to 1 in a set part in free memory, the specific crystal/white gem doesn't matter, only the count matters
-        //uint bytenum = 0;
-        //int bitnum = 0;
         switch (args.Item.Name)
         {
             case "Life":
@@ -387,93 +377,6 @@ public partial class App : Application
             default:
                 SyncGameState();
                 break;
-            //case "Crystal":
-            //    while (Memory.ReadBit(Addresses.CrystalsReceivedAddress + bytenum, bitnum))
-            //    {
-            //        bitnum++;
-            //        if (bitnum > 7)
-            //        {
-            //            bitnum = 0;
-            //            bytenum++;
-            //        }
-            //    }
-            //    if (bytenum > 8)
-            //    {
-            //        Log.Logger.Warning("Received crystals above the 64 crystal limit (somehow)");
-            //        return;
-            //    } 
-            //    Memory.WriteBit(Addresses.CrystalsReceivedAddress + bytenum, bitnum, true);
-
-
-            //    //edit lift mod to update crystal count
-            //    if (CrashObjectMod.liftMod == null)
-            //    {
-            //        Log.Error("Lift mod is not initialized!");
-            //        return;
-            //    }
-            //    uint crystalCount = 0;
-            //    List<Item> items = Client.GameState.ReceivedItems;
-            //    foreach (Item item in items)
-            //    {
-            //        //Log.Information($"Looking at: {item.Name} (Category: {item.Category})");
-            //        if (item.Name == "Crystal")
-            //        {
-            //            crystalCount++;
-            //        }
-            //    }
-            //    Log.Information($"Crystals counted = {crystalCount}");
-            //    List<byte[]> mods = new();
-            //    mods.Add(CustomHook.ConvertAsm([$"addiu $a0, $zero, 0x{crystalCount:X}"]).ToArray());
-            //    mods.Add(CustomHook.ConvertAsm([$"addiu $v1, $zero, 0x{crystalCount:X}"]).ToArray());
-
-            //    List<uint> modInstructionLines = [6507 - CrashObjectMod.magicOffset / 4, 6507];
-            //    CrashObjectMod.liftMod.EditMod(mods, modInstructionLines);
-
-            //    break;
-            //case "Clear Gem":
-            //    while (Memory.ReadBit(Addresses.GemsReceivedAddress + bytenum, bitnum))
-            //    {
-            //        bitnum++;
-            //        if (bitnum > 7)
-            //        {
-            //            bitnum = 0;
-            //            bytenum++;
-            //        }
-            //        if (bytenum == 7 && bitnum == 2)
-            //        {
-            //            //skip over the colored gems
-            //            bitnum = 7;
-            //        }
-            //    }
-            //    if (bytenum > 8)
-            //    {
-            //        Log.Logger.Warning("Received gems above the 64 gems limit (somehow)");
-            //        return;
-            //    }
-            //    Memory.WriteBit(Addresses.GemsReceivedAddress + bytenum, bitnum, true);
-            //    break;
-            //case "Red Gem":
-            //    Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.RedGemReceivedBit, true);
-            //    Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.RedGemReceivedBit, true);
-            //    break;
-            //case "Green Gem":
-            //    Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.GreenGemReceivedBit, true);
-            //    Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.GreenGemReceivedBit, true);
-            //    break;
-            //case "Purple Gem":
-            //    Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.PurpleGemReceivedBit, true);
-            //    Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.PurpleGemReceivedBit, true);
-            //    Log.Information($"got purple gem");
-            //    break;
-            //case "Blue Gem":
-            //    Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.BlueGemReceivedBit, true);
-            //    Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.BlueGemReceivedBit, true);
-            //    break;
-            //case "Yellow Gem":
-            //    Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.YellowGemReceivedBit, true);
-            //    Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.YellowGemReceivedBit, true);
-            //    break;
-            
         }
         
     }
@@ -613,18 +516,11 @@ public partial class App : Application
         Log.Logger.Information("Disconnected from Archipelago");
         // Avoid ongoing timers affecting a new game.
         _hintsList = null;
-        _sparxUpgrades = 0;
         _hasSubmittedGoal = false;
         _useQuietHints = true;
-        Log.Logger.Information("This Archipelago Client is compatible only with the NTSC-U 1.1 release of Spyro 3 (North America Greatest Hits version).");
+        Log.Logger.Information("This Archipelago Client is compatible only with the Crash Bandicoot 2 Europe (PAL) Release");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
-        //if (_loadGameTimer != null)
-        //{
-        //    _loadGameTimer.Enabled = false;
-        //    _loadGameTimer = null;
-        //}
-        
        
     }
 }

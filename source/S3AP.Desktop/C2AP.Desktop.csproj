@@ -35,6 +35,6 @@
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.8" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\S3AP\S3AP.csproj" />
+    <ProjectReference Include="..\S3AP\C2AP.csproj" />
   </ItemGroup>
 </Project>

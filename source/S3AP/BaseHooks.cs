@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace S3AP
+namespace C2AP
 {
     internal class BaseHooks
     {

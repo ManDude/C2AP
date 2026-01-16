@@ -1,4 +1,4 @@
-﻿namespace S3AP.Models
+﻿namespace C2AP.Models
 {
     public class Enums
     {

@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
 
-namespace S3AP
+namespace C2AP
 {
     internal class CrashObjectMod
     {

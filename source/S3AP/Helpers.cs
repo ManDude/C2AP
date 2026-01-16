@@ -1,15 +1,14 @@
 ﻿using Archipelago.Core.Models;
 using Archipelago.Core.Util;
-using S3AP.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using static S3AP.Models.Enums;
+using static C2AP.Models.Enums;
 using Location = Archipelago.Core.Models.Location;
-namespace S3AP
+namespace C2AP
 {
     public class Helpers
     {
