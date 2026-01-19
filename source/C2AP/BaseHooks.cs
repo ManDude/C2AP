@@ -28,7 +28,7 @@ namespace C2AP
             }
             //make sure nothing is left over in the "free" addresses
 
-            Memory.WriteByteArray(0xf000, new byte[0xfff]);
+            //Memory.WriteByteArray(0xf000, new byte[0xfff]);
 
             ApItemsHook = new CustomHook([
                 "addiu $sp, $sp, 0xFFF0",

@@ -420,7 +420,7 @@ namespace C2AP
             _targetInstructionSize = targetInstructionSize;
             _freeAddress = freeAddress;
 
-            List<byte> jmpBack = ConvertAsm([$"jmp 0x{(_targetAddress + (ulong)_targetInstructionSize):X}"]); //($"JMP 0x{(_targetAddress + (ulong)_targetInstructionSize):X}");
+            List<byte> jmpBack = ConvertAsm([$"jmp 0x{(_targetAddress + (ulong)_targetInstructionSize):X}", "nop"]); //($"JMP 0x{(_targetAddress + (ulong)_targetInstructionSize):X}");
             _hookSize = (ulong)(_targetInstructionSize + _bytes.Count + jmpBack.Count);
 
             byte[] freeBytes = Memory.ReadByteArray(_freeAddress, (int)_hookSize);
@@ -428,11 +428,18 @@ namespace C2AP
             if (freeBytes.Any(b => b != 0x00))
             {
                 Log.Debug($"CustomHook: Free space at 0x{_freeAddress:X} is not empty!");
-                return;
+                //return;
             }
 
             byte[] first = Memory.ReadByteArray(_targetAddress, _targetInstructionSize);
             List<byte> jmpto = ConvertAsm([$"jmp 0x{(_freeAddress):X}", "nop"]);
+
+            if (first.SequenceEqual(jmpto))
+            {
+                Log.Debug("hook already inserted from a previous connection");
+                return;
+            }
+
             while (jmpto.Count < targetInstructionSize)
             {
                 jmpto.Add(0x00);
@@ -457,7 +464,10 @@ namespace C2AP
                 Log.Warning("can't run RemoveHook on uninserted hook");
                 return;
             }
-            Memory.WriteByteArray(_targetAddress, Memory.ReadByteArray(_freeAddress, (int)_targetInstructionSize));
+            byte[] originalInstruction = Memory.ReadByteArray(_freeAddress, (int)_targetInstructionSize);
+            if (!originalInstruction.All(b => b == 0x00)) {
+                Memory.WriteByteArray(_targetAddress, originalInstruction);
+            }
             Memory.WriteByteArray(_freeAddress, new byte[_hookSize]);
 
             _hookSize = 0;
