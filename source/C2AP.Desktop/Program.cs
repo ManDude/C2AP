@@ -2,8 +2,9 @@
 
 using Avalonia;
 using Avalonia.ReactiveUI;
+using C2AP;
 
-namespace S3AP.Desktop;
+namespace C2AP.Desktop;
 
 class Program
 {
