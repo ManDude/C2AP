@@ -32,10 +32,15 @@ namespace C2AP
         public const uint SecretExitsAddress = 0x6ce79;
 
         public const uint LivesGlobalAddress = 0x6ce69; //8 bits
+        public const uint WumpaGlobalAddress = 0x6ce71; //8 bits
         public const uint StaticTextAddress = 0x5ce1c;
         public const string StaticText = "Library Programs (c) 1993-1997 Sony Computer Entertainment Inc., All Rights Reserved";
+
+        public const uint PolarLivesAddress = 0x6d060;
+        public const int PolarLivesBit = 5;
         //crash object
         public const uint LivesOffset = 0x145;
+        public const uint WumpaOffset = 0x141;
 
         public static Dictionary<string, int> BitOfLocation = new Dictionary<string, int>
         {
@@ -261,6 +266,9 @@ namespace C2AP
             { "Un-Bearable Secret Exit", 107 },
             { "Bear Down Secret Exit", 108 },
 
+            // Extra
+
+            { "Polar Lives Secret", 109 }
 
         };
 

@@ -13,7 +13,7 @@ namespace C2AP
     public class Helpers
     {
         private static GameStatus lastNonZeroStatus = GameStatus.Spawning;
-        private static bool lastInGameStatus = false;
+        public static bool lastInGameStatus = false;
         public static string OpenEmbeddedResource(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -69,6 +69,12 @@ namespace C2AP
                     address = Addresses.CrystalLocationsAddress;
                     bit = Addresses.BitOfLocation[locName];
                     category = "Crystal";
+                }
+                else if (locName.Contains("Polar"))
+                {
+                    address = Addresses.PolarLivesAddress;
+                    bit = Addresses.PolarLivesBit;
+                    category = "Misc";
                 }
                 else if (locName.Contains("Secret"))
                 {

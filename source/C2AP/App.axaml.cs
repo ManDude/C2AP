@@ -140,7 +140,7 @@ public partial class App : Application
             }
             if (args[0] == "snapshot")
             {
-                string filename = $"C:\\Users\\Deoxm\\Desktop\\AP folder\\memorysnapshot_{args[1]}.mem";
+                string filename = $"memorysnapshot_{args[1]}.mem";
                 Log.Logger.Information($"Creating memory snapshot at {filename}");
                 if (File.Exists(filename))
                 {
@@ -363,22 +363,29 @@ public partial class App : Application
     private async void ItemReceived(object? o, ItemReceivedEventArgs args)
     {
         Log.Logger.Debug($"Item Received: {JsonConvert.SerializeObject(args.Item)}");
+        uint crashAddress;
         switch (args.Item.Name)
         {
             case "Life":
-                //Log.Logger.Information("Receiving lives is not yet implemented.");
-                uint crashAddress = CrashObject.FindObjectAddress(0, 0);
+                crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
                 {
                     IncrementByte(crashAddress + Addresses.LivesOffset);
                 }
                 IncrementByte(Addresses.LivesGlobalAddress);
                 break;
+            case "Wumpa Fruit":
+                crashAddress = CrashObject.FindObjectAddress(0, 0);
+                if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
+                {
+                    IncrementByte(crashAddress + Addresses.WumpaOffset);
+                }
+                IncrementByte(Addresses.WumpaGlobalAddress);
+                break;
             default:
                 SyncGameState();
                 break;
         }
-        
     }
 
     private static void IncrementByte(uint address)
