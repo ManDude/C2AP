@@ -11,6 +11,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="fruitbundles.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="fruitbundles.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Archipelago.Core.AvaloniaGUI" Version="0.2.2" />
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />

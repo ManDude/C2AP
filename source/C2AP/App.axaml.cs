@@ -199,6 +199,7 @@ public partial class App : Application
         //InputLock.LockInput(InputFlag.Square);
         BaseHooks.Initialize();
 
+        FruitCheck.Initialize();
 
         Client.Connected += OnConnected;
         Client.Disconnected += OnDisconnected;
