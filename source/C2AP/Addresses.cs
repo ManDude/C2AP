@@ -39,7 +39,8 @@ namespace C2AP
         public const uint PolarLivesAddress = 0x6d060;
         public const int PolarLivesBit = 5;
 
-        public const uint CollectedTestAddress = 0x0000EF30;
+        public const uint FruitCollectedListStart = 0x0000EF30;
+        public const uint FruitCollectedListEnd = 0x0000EA30;
         //crash object
         public const uint LivesOffset = 0x145;
         public const uint WumpaOffset = 0x141;
