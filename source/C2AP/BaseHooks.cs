@@ -1,4 +1,5 @@
 ﻿using Archipelago.Core.Util;
+using Archipelago.Core.Util.Hook;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,7 @@ namespace C2AP
                 "addiu $sp, $sp, 0xFFF0",
                 "sw $t0, 0x4($sp)",
                 "sw $t1, 0x8($sp)",
+                "sw $t2, 0xc($sp)",
                 "la $t0, 0x8005f418", //address of "paused"
                 "lw $t1, 0($t0)",
                 "nop", //load delay
@@ -76,14 +78,38 @@ namespace C2AP
                 //get new gem address
                 $"la $v0, 0x{Addresses.GemLocationsWithReceivedColoredGemsAddress + 0x4 + offset:X}",
                 //exit
+                $"lw $t1, 0x{CrashObject.subtypeOffset:X}($s0)", //subtype
+                "addiu $t0, $zero, 0x10",
+                "bne $t1, $t0, 0xb", //real exit
+                $"lw $t2, 0x{CrashObject.stateOffset:X}($s0)", //State
+                                                                                //"addiu $t0, $zero, 0x0",
+                                                                                //"bne $t1, $t0, 0x6", //real exit
+                //increment collected test by 4
+                
+                $"la $t0, 0x{Addresses.CollectedTestAddress:X}",
+                "lw $t1, 0($t0)",
+                "nop",
+                "addiu $t1, $t1, 0x4",
+                "sw $t1, 0($t0)",
+
+                "subu $t0, $t0, $t1",
+                "sw $t2, 0($t0)", //store state
+
+                "addiu $t0, $zero, 0x0",
+                $"sw $t0, 0x{CrashObject.stateOffset:X}($s0)",
+
+                //real exit
                 "lw $t0, 0x4($sp)",
                 "lw $t1, 0x8($sp)",
+                "lw $t2, 0xc($sp)",
                 "addiu $sp, $sp, 0x10",
             ]);
             //0x19, 0x11, 0x0A, 0x0F, 0x10
 
             ApItemsHook.InsertHook(0x3A8C0, 0xf030);
             App.SyncGameState();
+
+            
             //uint address = CrashObject.FindObjectAddress(36, 8);
             //uint bytecodeAddress = CrashObject.GetGoolBytecodeAddressFromObject(address);
 

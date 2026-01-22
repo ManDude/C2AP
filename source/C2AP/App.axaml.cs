@@ -121,7 +121,13 @@ public partial class App : Application
                 _useQuietHints = false;
                 break;
             case "exec":
-                CrashObject.FindObjectAddress(0, 0);
+                //Log.Logger.Information("execing");
+                List<uint> objs = CrashObject.FindAllObjectAddresses(3, 16);
+                Log.Logger.Information($"objs found:");
+                foreach (uint obj in objs)
+                {
+                    Log.Logger.Information($"obj address: {obj:X}, state: {Memory.ReadUInt(obj + 0x1C):X}, ID: {Memory.ReadUInt(obj + 0xB8):X}, various: {Memory.ReadUInt(obj + 0xD4):X}");
+                }
                 break;
         }
         string[] args = command.Split(' ');
