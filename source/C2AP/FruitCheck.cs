@@ -50,12 +50,14 @@ namespace C2AP
                         Bundles = new List<FruitBundle>();
 
                         string line;
+                        uint id = 0;
                         uint levelid = 0;
                         int totalBundles = 0;
                         int currentBundle = -1;
                         FruitBundle bundle = new();
                         while ((line = reader.ReadLine()) != null)
                         {
+                            if (line[0] == '#') continue;
                             string[] split = line.Split('-');
                             if (split.Length == 1)
                             {
@@ -72,8 +74,10 @@ namespace C2AP
                                     bundle.locationId = 10000 + totalBundles;
                                     totalBundles++;
                                 }
-
-                                FruitIdToBundle[Convert.ToUInt32(split[1], 16) + levelid] = totalBundles-1;
+                                id = Convert.ToUInt32(split[1], 16);
+                                id = id << 8;
+                                id += levelid;
+                                FruitIdToBundle[id] = totalBundles-1;
                                 bundle.requiredFruitCount++;
                             }
                         }
@@ -151,6 +155,48 @@ namespace C2AP
                 Log.Logger.Information($"sending {bundle.locationId}");
             }
             //Log.Logger.Information("scanning6");
+        }
+
+        public static List<uint> DebugScanFruitList()
+        {
+            List<uint> list = new List<uint>();
+            //if (FruitIdToBundle == null) return list;
+            //if (Bundles == null) return list;
+
+            uint len = Memory.ReadUInt(Addresses.FruitCollectedListStart);
+            if (len == 0) return list;
+
+            uint levelId = Memory.ReadByte(Addresses.LevelIdAddress + 1);
+            //Log.Logger.Information("scanning");
+            Memory.ReadByteArray(Addresses.FruitCollectedListStart - len, (int)len);
+            //Memory.
+            uint id;
+            for (uint i = 0; i < len; i += 4)
+            {
+                //Log.Logger.Information("scanning1");
+                id = Memory.ReadUInt(Addresses.FruitCollectedListStart - len + i);
+                id = id >> 8;
+                //id += levelId;
+                //CheckId(id);
+                list.Add(id);
+            }
+
+            //clear out the list
+            //Log.Logger.Information("clearing");
+            Memory.WriteByteArray(Addresses.FruitCollectedListStart - len, new byte[(int)len + 4]);
+
+            //check if fruit was added during the scan
+            while (true)
+            {
+                len += 4;
+                id = Memory.ReadUInt(Addresses.FruitCollectedListStart - len);
+                if (id == 0) break;
+                Memory.Write(Addresses.FruitCollectedListStart - len, new byte[4]);
+                //id += levelId;
+                id = id >> 8;
+                list.Add(id);
+            }
+            return list;
         }
     }
 }

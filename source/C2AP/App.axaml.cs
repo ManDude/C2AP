@@ -19,6 +19,7 @@ using Avalonia.OpenGL;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
+using SharpDX.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -129,13 +130,14 @@ public partial class App : Application
                     Log.Logger.Information($"obj address: {obj:X}, state: {Memory.ReadUInt(obj + 0x1C):X}, ID: {Memory.ReadUInt(obj + 0xB8):X}, various: {Memory.ReadUInt(obj + 0xD4):X}");
                 }
                 break;
+            
         }
         string[] args = command.Split(' ');
         if (args.Length == 2)
         {
             if (args[0] == "giveloc") //testing crystal locations
             {
-                
+
                 uint address = Addresses.CrystalLocationsAddress;
                 int bits = Convert.ToInt32(args[1]);
 
@@ -158,7 +160,49 @@ public partial class App : Application
                     fs.Write(memoryDump, 0, memoryDump.Length);
                 }
             }
-            
+        }
+        if (args.Length >= 2) { 
+            if (args[0] == "b")
+            {
+                Log.Logger.Information("bundling");
+                string filepath = "bundles.txt";
+                int bundleId = -1;
+                using (StreamReader reader = new StreamReader(filepath))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        if (line[0] == '#') continue;
+                        bundleId = Convert.ToInt32(line.Split('-')[0], 16);
+                    }
+                }
+                bundleId++;
+                List<uint> fruitList = FruitCheck.DebugScanFruitList();
+                string name = "#";
+                for (int i = 1; i < args.Length; i++)
+                {
+                    name += $"{args[i]}";
+                    if (i < args.Length - 1)
+                    {
+                        name += " ";
+                    }
+                }
+                List<string> content = [name];
+                foreach (uint fruit in fruitList)
+                {
+                    content.Add($"{bundleId:X}-{fruit:X}");
+                }
+                try
+                {
+                    File.AppendAllLines(filepath, content);
+                    Log.Logger.Information("Content appended successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.Information($"An error occurred: {ex.Message}");
+                }
+                Log.Logger.Information("bundled");
+            }
         }
     }
     private async void Context_ConnectClicked(object? sender, ConnectClickedEventArgs e)
@@ -199,7 +243,7 @@ public partial class App : Application
         //InputLock.LockInput(InputFlag.Square);
         BaseHooks.Initialize();
 
-        FruitCheck.Initialize();
+        //FruitCheck.Initialize();
 
         Client.Connected += OnConnected;
         Client.Disconnected += OnDisconnected;

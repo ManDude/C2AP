@@ -1,5 +1,283 @@
+#level: Turtle Woods
 1e
-0-1e00
-0-2100
-1-2300
-2-2500
+#Checkpoint 0
+0-25
+0-23
+0-21
+0-1E
+#Bonus Part 1
+1-93
+1-92
+1-91
+1-90
+1-8F
+1-8E
+1-8D
+1-8C
+#Bonus Part 2
+2-9F
+2-9D
+2-9C
+2-9B
+2-9A
+2-99
+#Bonus Part 3
+3-A4
+3-A3
+3-A2
+3-A1
+3-A0
+#Bonus Part 4
+4-AB
+4-AA
+4-A9
+4-A6
+#Checkpoint 2 Part 1
+5-85
+5-84
+5-5E
+#Checkpoint 2 Part 2
+6-BD
+6-BB
+6-BA
+#level: Snow Go
+0E
+#Checkpoint 1
+0-163
+0-164
+0-162
+#Above Bonus
+1-192
+1-195
+1-194
+1-193
+1-18F
+1-18D
+#Bonus Part 1
+2-199
+2-198
+2-197
+2-196
+#Bonus Part 2
+3-1AB
+3-1AA
+3-1A9
+3-1A8
+3-19A
+#Bonus Part 3
+4-1B2
+4-1B1
+4-1AD
+4-1B0
+4-1AF
+4-1AE
+4-1AC
+#Bonus Part 4
+5-1B8
+5-1B6
+5-1B5
+5-1B4
+5-1B3
+#Bonus Part 5
+6-1C4
+6-1C3
+6-1C1
+6-1C2
+6-1BF
+6-1C0
+6-1BE
+#2D Exit
+7-1A2
+7-1A3
+7-1A4
+7-1A5
+7-1A1
+7-1A0
+7-19F
+7-19E
+7-19D
+#Nitro Switch
+8-2C
+8-29
+8-28
+8-27
+8-26
+8-2A
+8-2B
+#level: Hang Eight
+19
+#Before Checkpoint 1
+0-86
+0-85
+0-84
+#Bonus Part 1
+1-101
+1-100
+1-FF
+1-FE
+1-FD
+1-FC
+#Bonus Part 2
+2-105
+2-104
+2-103
+2-102
+#Bonus Part 3
+3-108
+3-109
+3-10A
+3-10B
+3-10C
+3-10D
+#Bonus Part 4
+4-113
+4-115
+4-114
+4-10F
+4-111
+4-110
+#Blue Gem Path Part 1
+5-34
+5-33
+5-31
+#Blue Gem Path Part 2
+6-3D
+6-3C
+6-3B
+#Blue Gem Path Part 3
+7-6F
+7-6D
+#level: The Pits
+1F
+#Around Crystal
+0-86
+0-88
+0-87
+0-82
+0-80
+0-7D
+0-7E
+0-7F
+#Bonus Part 1
+1-CF
+1-CE
+1-CD
+1-CC
+#Bonus Part 2
+2-D5
+2-D3
+2-D2
+2-D4
+#Bonus Part 3
+3-DD
+3-DA
+3-D9
+3-D8
+3-D7
+3-D6
+#Bonus Part 4
+4-E1
+4-E0
+4-DF
+4-DE
+#After Bonus
+5-AC
+5-AE
+5-B0
+5-B1
+5-AB
+5-AA
+#level: Crash Dash
+18
+#Start
+0-9F
+0-A0
+0-A1
+#2nd Boulder Part 1
+1-89
+1-8B
+1-8C
+1-8D
+1-8E
+1-8F
+1-90
+#2nd Boulder Part 2
+2-81
+2-82
+2-84
+2-85
+2-86
+2-87
+2-88
+#2nd Boulder Part 3
+3-76
+3-78
+3-79
+3-7D
+3-7E
+3-7F
+3-80
+#3rd Boulder
+4-62
+4-63
+4-66
+4-68
+4-69
+4-6B
+4-6C
+4-6E
+4-6F
+#Bonus Part 1
+5-AF
+5-AE
+5-B0
+5-AD
+5-AC
+#Bonus Part 2
+6-B6
+6-B2
+6-B5
+6-B4
+6-B3
+#Bonus Part 3
+7-B7
+7-BC
+7-BB
+7-BA
+7-B9
+#Bonus Part 4
+8-C6
+8-C5
+8-C4
+8-C0
+8-BF
+8-BE
+8-BD
+#Bonus Part 5
+9-C8
+9-C9
+9-CA
+9-CB
+9-CC
+9-C7
+#Booster 1
+A-3C
+A-3D
+A-3E
+A-3F
+A-40
+A-41
+#Booster 2
+B-33
+B-34
+B-36
+B-37
+B-38
+B-39
+#4th Boulder
+C-22
+C-23
+C-24
+C-25
+C-26
+C-27
