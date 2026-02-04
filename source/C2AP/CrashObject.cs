@@ -57,20 +57,20 @@ namespace C2AP
         
         private static uint FindObjectRecursive(uint objAddress, uint type, uint subtype)
         {
-            Log.Debug($"Checking object at address 0x{objAddress:X}");
+            //Log.Verbose($"Checking object at address 0x{objAddress:X}");
             if (objAddress == cacheOffset || objAddress == 0) return 0; //check for null pointer
 
             if (Memory.ReadUInt(objAddress) == 0) //check object header
             {
-                Log.Debug($"Found a free object in list at 0x{objAddress:X}, skipping...");
+                //Log.Verbose($"Found a free object in list at 0x{objAddress:X}, skipping...");
                 return 0;
             }
 
             //Log.Information($"Object entity ID is {Memory.ReadUInt(objAddress + entityIdOffset)}");
-            Log.Debug($"Object subtype is {Memory.ReadUInt(objAddress + subtypeOffset)}");
+            //Log.Verbose($"Object subtype is {Memory.ReadUInt(objAddress + subtypeOffset)}");
             if (Memory.ReadUInt(objAddress + subtypeOffset) == subtype)
             {
-                Log.Debug($"Found object with subtype {subtype} at address 0x{objAddress:X}");
+                //Log.Verbose($"Found object with subtype {subtype} at address 0x{objAddress:X}");
 
                 //check type
                 //bool typeMatches = false;
@@ -82,18 +82,18 @@ namespace C2AP
                 else
                 {
                     uint itemAddress = GetItemAddressFromEntry(goolEntryAddress, 0);
-                    Log.Debug($"Gool entry address is 0x{goolEntryAddress:X}, first item address is 0x{itemAddress:X}");
+                    //Log.Verbose($"Gool entry address is 0x{goolEntryAddress:X}, first item address is 0x{itemAddress:X}");
                     if (Memory.ReadUInt(itemAddress) == type)
                     {
-                        Log.Debug($"Found object with type {type} at address 0x{objAddress:X}");
+                        //Log.Verbose($"Found object with type {type} at address 0x{objAddress:X}");
                         return objAddress;
                     }
-                    Log.Debug($"Object type {Memory.ReadUInt(itemAddress)} does not match desired type {type}");
+                    //Log.Verbose($"Object type {Memory.ReadUInt(itemAddress)} does not match desired type {type}");
                 }
             }
 
             uint childObjAddress = Memory.ReadUInt(objAddress + childOffset) - cacheOffset; //first child object
-            Log.Debug($"Recursing into child object at address 0x{childObjAddress:X}");
+            //Log.Verbose($"Recursing into child object at address 0x{childObjAddress:X}");
             uint foundAddress = FindObjectRecursive(childObjAddress, type, subtype);
             if (foundAddress != cacheOffset && foundAddress != 0)
             {
@@ -101,7 +101,7 @@ namespace C2AP
             }
             
             uint siblingObjAddress = Memory.ReadUInt(objAddress + siblingOffset) - cacheOffset; //next sibling object
-            Log.Debug($"Recursing into sibling object at address 0x{siblingObjAddress:X}");
+            //Log.Verbose($"Recursing into sibling object at address 0x{siblingObjAddress:X}");
             return FindObjectRecursive(siblingObjAddress, type, subtype);
             
 
@@ -141,21 +141,21 @@ namespace C2AP
 
         private static List<uint> FindAllObjectRecursive(uint objAddress, uint type, uint subtype)
         {
-            Log.Debug($"Checking object at address 0x{objAddress:X}");
+            //Log.Debug($"Checking object at address 0x{objAddress:X}");
             if (objAddress == cacheOffset || objAddress == 0) return []; //check for null pointer
 
             if (Memory.ReadUInt(objAddress) == 0) //check object header
             {
-                Log.Debug($"Found a free object in list at 0x{objAddress:X}, skipping...");
+                //Log.Debug($"Found a free object in list at 0x{objAddress:X}, skipping...");
                 return [];
             }
             List<uint> addresses = new();
 
             //Log.Information($"Object entity ID is {Memory.ReadUInt(objAddress + entityIdOffset)}");
-            Log.Debug($"Object subtype is {Memory.ReadUInt(objAddress + subtypeOffset)}");
+            //Log.Debug($"Object subtype is {Memory.ReadUInt(objAddress + subtypeOffset)}");
             if (Memory.ReadUInt(objAddress + subtypeOffset) == subtype)
             {
-                Log.Debug($"Found object with subtype {subtype} at address 0x{objAddress:X}");
+                //Log.Debug($"Found object with subtype {subtype} at address 0x{objAddress:X}");
 
                 //check type
                 //bool typeMatches = false;
@@ -167,25 +167,25 @@ namespace C2AP
                 else
                 {
                     uint itemAddress = GetItemAddressFromEntry(goolEntryAddress, 0);
-                    Log.Debug($"Gool entry address is 0x{goolEntryAddress:X}, first item address is 0x{itemAddress:X}");
+                    //Log.Debug($"Gool entry address is 0x{goolEntryAddress:X}, first item address is 0x{itemAddress:X}");
                     if (Memory.ReadUInt(itemAddress) == type)
                     {
-                        Log.Debug($"Found object with type {type} at address 0x{objAddress:X}");
+                        //Log.Debug($"Found object with type {type} at address 0x{objAddress:X}");
                         addresses.Add(objAddress);
                     }
                     else
                     {
-                        Log.Debug($"Object type {Memory.ReadUInt(itemAddress)} does not match desired type {type}");
+                        //Log.Debug($"Object type {Memory.ReadUInt(itemAddress)} does not match desired type {type}");
                     }
                 }
             }
 
             uint childObjAddress = Memory.ReadUInt(objAddress + childOffset) - cacheOffset; //first child object
-            Log.Debug($"Recursing into child object at address 0x{childObjAddress:X}");
+            //Log.Debug($"Recursing into child object at address 0x{childObjAddress:X}");
             addresses.AddRange(FindAllObjectRecursive(childObjAddress, type, subtype));
 
             uint siblingObjAddress = Memory.ReadUInt(objAddress + siblingOffset) - cacheOffset; //next sibling object
-            Log.Debug($"Recursing into sibling object at address 0x{siblingObjAddress:X}");
+            //Log.Debug($"Recursing into sibling object at address 0x{siblingObjAddress:X}");
             addresses.AddRange(FindAllObjectRecursive(siblingObjAddress, type, subtype));
 
             return addresses;
@@ -212,7 +212,7 @@ namespace C2AP
                 return 0;
             }
             uint bytecodeAddress = GetItemAddressFromEntry(goolEntryAddress, 1); //second item is bytecode
-            Log.Debug($"Gool bytecode address is 0x{bytecodeAddress:X}");
+            //Log.Debug($"Gool bytecode address is 0x{bytecodeAddress:X}");
             return bytecodeAddress;
         }
     }

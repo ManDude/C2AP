@@ -19,7 +19,6 @@ using Avalonia.OpenGL;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
-using SharpDX.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -48,6 +47,25 @@ public partial class App : Application
     private static bool _hasSubmittedGoal { get; set; }
     private static bool _useQuietHints { get; set; }
 
+    private class CrashState
+    {
+        public uint Crystals;
+        public uint ClearGems;
+
+        public byte[] CrystalLocations = new byte[8];
+        public byte[] GemLocations = new byte[8];
+
+        public byte[] GemLocationsWithReceivedColoredGems = new byte[8];
+
+        public bool RedGem;
+        public bool GreenGem;
+        public bool PurpleGem;
+        public bool BlueGem;
+        public bool YellowGem;
+
+    }
+
+    private static CrashState crashState = new CrashState();
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -76,7 +94,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
+        Context.ClientVersion = "v0.2.0 - pre"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
@@ -89,6 +107,7 @@ public partial class App : Application
         _hasSubmittedGoal = false;
         _useQuietHints = true;
         //Log.Logger.Information("Hello World");
+        //Log.Logger.Information("C2AP v0.2.0 - pre");
         Log.Logger.Information("This Archipelago Client is compatible only with the Crash Bandicoot 2 Europe (PAL) Release");
         Log.Logger.Information("Trying to play with a different version will not work and may release all of your locations at the start.");
 
@@ -109,9 +128,15 @@ public partial class App : Application
     {
         switch (command)
         {
-            case "clearSpyroGameState":
+            case "clearCrashGameState":
                 Log.Logger.Information("Clearing the game state.  Please reconnect to the server while in game to refresh received items.");
                 Client.ForceReloadAllItems();
+                break;
+            case "syncCrashGameState":
+                Log.Logger.Information("Syncing the game state.");
+                SyncGameState();
+                UpdateCrashState();
+                Log.Logger.Information("Sync complete.");
                 break;
             case "useQuietHints":
                 Log.Logger.Information("Hints for found locations will not be displayed.  Type 'useVerboseHints' to show them.");
@@ -130,7 +155,23 @@ public partial class App : Application
                     Log.Logger.Information($"obj address: {obj:X}, state: {Memory.ReadUInt(obj + 0x1C):X}, ID: {Memory.ReadUInt(obj + 0xB8):X}, various: {Memory.ReadUInt(obj + 0xD4):X}");
                 }
                 break;
-            
+            case "itemstate":
+                if (Client.ItemState == null) break;
+                List<Item> items = Client.ItemState.ReceivedItems.OfType<Item>().ToList();
+                foreach (Item item in items)
+                {
+                    Log.Logger.Information($"{item.Name}");
+                }
+                break;
+            case "locationstate":
+                if (Client.LocationState == null) break;
+                List<Location> locations = Client.LocationState.CompletedLocations.OfType<Location>().ToList();
+                foreach (Location location in locations)
+                {
+                    Log.Logger.Information($"{location.Name}");
+                }
+                break;
+
         }
         string[] args = command.Split(' ');
         if (args.Length == 2)
@@ -243,12 +284,12 @@ public partial class App : Application
         //InputLock.LockInput(InputFlag.Square);
         BaseHooks.Initialize();
 
-        //FruitCheck.Initialize();
+        
 
         Client.Connected += OnConnected;
         Client.Disconnected += OnDisconnected;
 
-        await Client.Connect(e.Host, "Crash2");
+        await Client.Connect(e.Host, "Crash2", "");
         if (!Client.IsConnected)
         {
             Log.Logger.Error("Your host seems to be invalid.  Please confirm that you have entered it correctly.");
@@ -271,7 +312,9 @@ public partial class App : Application
         //    Log.Logger.Error("Failed to login.  Please check your host, name, and password.");
         //}
         Client.MonitorLocations(GameLocations);
+        FruitCheck.Initialize();
         CrashObjectMod.Initialize();
+        //Archipelago.MultiClient.Net.
     }
 
     private void UpdateGemLocationsChecked()
@@ -292,27 +335,188 @@ public partial class App : Application
         for (int i = 0; i < gemFlags.Length; i++)
             Log.Debug($"gemflags {i}: {gemFlags[i]:X}");
         Memory.WriteByteArray(Addresses.GemLocationsWithReceivedColoredGemsAddress, gemFlags);
-        SyncGameState();
+        //SyncGameState();
     }
 
     private void Client_LocationCompleted(object? sender, LocationCompletedEventArgs e)
     {
-        if (Client.GameState == null) return;
+        //if (Client.GameState == null) return;
         //UpdateGemLocationsChecked();
-        //var currentEggs = CalculateCurrentEggs();
-        SyncGameState();
+        //SyncGameState();
+        UpdateCrashState();
         CheckGoalCondition();
+    }
+
+    public static void UpdateCrashState()
+    {
+        // Updates the game with the current crashState
+        if (Client.LocationState == null) return;
+        if (Client.ItemState == null) return;
+
+        // First get the current locations from the game
+        byte[] gemFlags = Memory.ReadByteArray(Addresses.GemLocationsAddress, 8);
+        byte[] crystalFlags = Memory.ReadByteArray(Addresses.CrystalLocationsAddress, 8);
+        for (int i = 0; i < 8; i++)
+        {
+            crashState.GemLocations[i] |= gemFlags[i];
+            crashState.CrystalLocations[i] |= crystalFlags[i];
+        }
+
+        uint crystalCount = crashState.Crystals;
+        uint clearGemCount = crashState.ClearGems;
+
+        //update center lift with current crystalCount
+        if (CrashObjectMod.liftMod == null)
+        {
+            Log.Debug("Lift mod is not initialized!");
+        }
+        else
+        {
+            List<byte[]> mods =
+            [
+                CustomHook.ConvertAsm([$"addiu $a0, $zero, 0x{crystalCount:X}"]).ToArray(),
+                CustomHook.ConvertAsm([$"addiu $v1, $zero, 0x{crystalCount:X}"]).ToArray(),
+            ];
+
+            List<uint> modInstructionLines = [6507 - CrashObjectMod.magicOffset / 4, 6507];
+            CrashObjectMod.liftMod.EditMod(mods, modInstructionLines);
+        }
+
+        //set crystal item flags
+        byte[] bytes = new byte[8];
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            for (int j = 1; j < 0xFF; j = j << 1)
+            {
+                if (crystalCount == 0) break;
+                crystalCount--;
+                bytes[i] |= (byte)j;
+            }
+            if (crystalCount == 0) break;
+        }
+        Memory.WriteByteArray(Addresses.CrystalsReceivedAddress, bytes);
+
+        //set clear gem item flags
+        bytes = new byte[8];
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            int bit = 1;
+            for (int j = 0; j < 8; j++)
+            {
+                if (clearGemCount == 0) break;
+                clearGemCount--;
+                if (i == Addresses.ColoredGemOffset && j == Addresses.RedGemReceivedBit)
+                {
+                    j = Addresses.YellowGemReceivedBit + 0x1;
+                }
+                bytes[i] |= (byte)bit;
+                bit = bit << 1;
+            }
+            if (clearGemCount == 0) break;
+        }
+        Memory.WriteByteArray(Addresses.GemsReceivedAddress, bytes);
+
+        //set colored gem flags
+
+        Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.RedGemReceivedBit, crashState.RedGem);
+        Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.GreenGemReceivedBit, crashState.GreenGem);
+        Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.PurpleGemReceivedBit, crashState.PurpleGem);
+        Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.BlueGemReceivedBit, crashState.BlueGem);
+        Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.YellowGemReceivedBit, crashState.YellowGem);
+
+        //set GemLocationsWithReceivedColoredGems
+        crashState.GemLocationsWithReceivedColoredGems = crashState.GemLocations;
+        crashState.GemLocationsWithReceivedColoredGems[Addresses.ColoredGemOffset] &= Addresses.ColoredGemMaskNegated; //clear out colored gem bits
+        crashState.GemLocationsWithReceivedColoredGems[Addresses.ColoredGemOffset] |= (byte)(
+            (crashState.RedGem ? (0x1 << Addresses.RedGemReceivedBit) : 0) |
+            (crashState.GreenGem ? (0x1 << Addresses.GreenGemReceivedBit) : 0) |
+            (crashState.PurpleGem ? (0x1 << Addresses.PurpleGemReceivedBit) : 0) |
+            (crashState.BlueGem ? (0x1 << Addresses.BlueGemReceivedBit) : 0) |
+            (crashState.YellowGem ? (0x1 << Addresses.YellowGemReceivedBit) : 0)
+        );
+        Memory.WriteByteArray(Addresses.GemLocationsWithReceivedColoredGemsAddress, crashState.GemLocationsWithReceivedColoredGems);
+
+        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.RedGemReceivedBit, crashState.RedGem);
+        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.GreenGemReceivedBit, crashState.GreenGem);
+        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.PurpleGemReceivedBit, crashState.PurpleGem);
+        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.BlueGemReceivedBit, crashState.BlueGem);
+        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.YellowGemReceivedBit, crashState.YellowGem);
     }
 
     public static void SyncGameState()
     {
-        if (Client.GameState == null) return;
+        // Adds locationState and itemState to the current crashState
+        if (Client.LocationState == null) return;
+        if (Client.ItemState == null) return;
 
-        Log.Debug($"syncing");
-        // Convert ILocation list to Location list if needed
-        List<Location> locations = Client.GameState.CompletedLocations.OfType<Location>().ToList();
+        List<Location> locations = Client.LocationState.CompletedLocations.OfType<Location>().ToList();
         foreach (Location location in locations)
         {
+            if (location.Address == 0 || location.AddressBit == 0) continue;
+            if (location.Address >= Addresses.GemLocationsAddress && location.Address < Addresses.GemLocationsAddress + 8)
+            {
+                crashState.GemLocations[location.Address - Addresses.GemLocationsAddress] |= (byte)(0x1 << location.AddressBit);
+            }
+            if (location.Address >= Addresses.CrystalLocationsAddress && location.Address < Addresses.CrystalLocationsAddress + 8)
+            {
+                crashState.CrystalLocations[location.Address - Addresses.CrystalLocationsAddress] |= (byte)(0x1 << location.AddressBit);
+            }
+        }
+
+        List<Item> items = Client.ItemState.ReceivedItems.ToList();
+        uint crystalCount = 0;
+        uint clearGemCount = 0;
+        List<int> coloredGems = new();
+        foreach (Item item in items)
+        {
+            switch (item.Name)
+            {
+                case "Crystal":
+                    crystalCount++;
+                    break;
+                case "Clear Gem":
+                    clearGemCount++;
+                    break;
+                case "Red Gem":
+                    crashState.RedGem = true;
+                    break;
+                case "Green Gem":
+                    crashState.GreenGem = true;
+                    break;
+                case "Purple Gem":
+                    crashState.PurpleGem = true;
+                    break;
+                case "Blue Gem":
+                    crashState.BlueGem = true;
+                    break;
+                case "Yellow Gem":
+                    crashState.YellowGem = true;
+                    break;
+            }
+        }
+        if (crashState.Crystals < crystalCount)
+        {
+            crashState.Crystals = crystalCount;
+        }
+        if (crashState.ClearGems < clearGemCount)
+        {
+            crashState.ClearGems = clearGemCount;
+        }
+    }
+    public static async Task SyncGameStateOld()
+    {
+        if (Client.LocationState == null) return;
+        if (Client.ItemState == null) return;
+
+        Log.Debug($"syncing");
+
+        await Client.SaveGameStateAsync();
+        // Convert ILocation list to Location list if needed
+        List<Location> locations = Client.LocationState.CompletedLocations.OfType<Location>().ToList();
+        //List<Location> locations = Client.GameState.CompletedLocations.OfType<Location>().ToList();
+        foreach (Location location in locations)
+        {
+            if (location.Address == 0 || location.AddressBit == 0) continue;
             Log.Debug($"address: {location.Address:X}, bit: {location.AddressBit}");
             Memory.WriteBit(location.Address, location.AddressBit, true);
 
@@ -322,7 +526,8 @@ public partial class App : Application
                 Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + offset, location.AddressBit, true);
             }
         }
-        List<Item> items = Client.GameState.ReceivedItems;
+        //List<Item> items = Client.GameState.ReceivedItems;
+        List<Item> items = Client.ItemState.ReceivedItems.ToList();
         uint crystalCount = 0;
         uint clearGemCount = 0;
         List<int> coloredGems = new();
@@ -417,6 +622,27 @@ public partial class App : Application
         uint crashAddress;
         switch (args.Item.Name)
         {
+            case "Crystal":
+                crashState.Crystals++;
+                break;
+            case "Clear Gem":
+                crashState.ClearGems++;
+                break;
+            case "Red Gem":
+                crashState.RedGem = true;
+                break;
+            case "Green Gem":
+                crashState.GreenGem = true;
+                break;
+            case "Purple Gem":
+                crashState.PurpleGem = true;
+                break;
+            case "Blue Gem":
+                crashState.BlueGem = true;
+                break;
+            case "Yellow Gem":
+                crashState.YellowGem = true;
+                break;
             case "Life":
                 crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
@@ -424,7 +650,8 @@ public partial class App : Application
                     IncrementByte(crashAddress + Addresses.LivesOffset);
                 }
                 IncrementByte(Addresses.LivesGlobalAddress);
-                break;
+                return;
+                //break;
             case "Wumpa Fruit":
                 crashAddress = CrashObject.FindObjectAddress(0, 0);
                 if (crashAddress != 0 && crashAddress != CrashObject.cacheOffset)
@@ -432,11 +659,13 @@ public partial class App : Application
                     IncrementByte(crashAddress + Addresses.WumpaOffset);
                 }
                 IncrementByte(Addresses.WumpaGlobalAddress);
-                break;
-            default:
-                SyncGameState();
-                break;
+                return;
+                //break;
+            //default:
+            //    SyncGameState();
+            //    break;
         }
+        UpdateCrashState();
     }
 
     private static void IncrementByte(uint address)
@@ -450,6 +679,9 @@ public partial class App : Application
 
     private static void CheckGoalCondition()
     {
+        if (Client.LocationState == null) return;
+        if (Client.ItemState == null) return;
+
         if (_hasSubmittedGoal)
         {
             return;
@@ -542,7 +774,7 @@ public partial class App : Application
     }
     private static void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
     {
-        if (Client.GameState == null) return;
+        //if (Client.GameState == null) return;
         CheckGoalCondition();
 
     }
@@ -567,6 +799,7 @@ public partial class App : Application
         // with keys=[$"hints_{team}_{slot}"].
         Client?.SendMessage("!hint");
         SyncGameState();
+        UpdateCrashState();
     }
 
     private static void OnDisconnected(object sender, EventArgs args)

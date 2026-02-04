@@ -1,7 +1,7 @@
 ﻿using Archipelago.Core.Models;
 using Archipelago.Core.Util;
+using ReactiveUI;
 using Serilog;
-using SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,11 +15,12 @@ namespace C2AP
 {
     internal class FruitCheck
     {
-        private class FruitBundle
+        public class FruitBundle
         {
             public SortedSet<uint> collectedFruits = new SortedSet<uint>();
             public int requiredFruitCount;
             public int locationId;
+            public string locationName = "";
         }
         //private struct FruitBundle
         //{
@@ -30,13 +31,26 @@ namespace C2AP
 
         private static Dictionary<uint, int> ?FruitIdToBundle;
 
-        private static List<FruitBundle> ?Bundles;
+        public static List<FruitBundle> ?Bundles;
 
         private static Timer checkFruitTimer = new Timer();
         public static void Initialize()
         {
             if (FruitIdToBundle == null || Bundles == null)
             {
+                App.Client.Options.TryGetValue("fruit_sanity", out var fruit_sanity_option);
+                
+                if (fruit_sanity_option != null)
+                {
+                    Log.Logger.Debug($"option: {fruit_sanity_option}");
+                }
+                else
+                {
+                    Log.Logger.Debug($"option: null");
+                    return;
+                }
+                int fruit_sanity = Convert.ToInt32(fruit_sanity_option.ToString()); //Convert.ToInt32(fruit_sanity_option);
+                if (fruit_sanity == 0) return;
                 try
                 {
                     var assembly = Assembly.GetExecutingAssembly();
@@ -49,15 +63,45 @@ namespace C2AP
                         FruitIdToBundle = new Dictionary<uint, int>();
                         Bundles = new List<FruitBundle>();
 
+                        int bundleLocationIdOffset = 10000;
+                        if (fruit_sanity == 2)
+                        {
+                            bundleLocationIdOffset = 20000;
+                        }
                         string line;
                         uint id = 0;
                         uint levelid = 0;
                         int totalBundles = 0;
                         int currentBundle = -1;
+                        string levelname = "";
+                        string bundlename = "";
                         FruitBundle bundle = new();
                         while ((line = reader.ReadLine()) != null)
                         {
-                            if (line[0] == '#') continue;
+                            if (line[0] == '#')
+                            {
+                                if (line.Contains("level:"))
+                                {
+                                    levelname = line.Replace("#level: ", "");
+                                }
+                                else
+                                {
+                                    if (bundlename != "")
+                                    {                   //level_name + " " + bundle_name + " bundle (" + str(wumpa_count) + " wumpas)"
+                                        if (fruit_sanity == 1)
+                                        {
+                                            bundle.locationName = $"{levelname} {bundlename}  bundle ({bundle.requiredFruitCount} wumpas)";
+                                        }
+                                        else // == 2
+                                        {
+                                            bundle.locationName = $"{levelname} {bundlename} Wumpa #";
+                                        }
+                                        
+                                    }
+                                    bundlename = line.Replace("#", "");
+                                }
+                                continue;
+                            }
                             string[] split = line.Split('-');
                             if (split.Length == 1)
                             {
@@ -66,18 +110,18 @@ namespace C2AP
                             }
                             else
                             {
-                                if (Convert.ToInt32(split[0], 16) != currentBundle)
+                                if (fruit_sanity == 2 || Convert.ToInt32(split[0], 16) != currentBundle)
                                 {
                                     currentBundle = Convert.ToInt32(split[0], 16);
                                     Bundles.Add(new FruitBundle());
                                     bundle = Bundles.Last();
-                                    bundle.locationId = 10000 + totalBundles;
+                                    bundle.locationId = bundleLocationIdOffset + totalBundles;
                                     totalBundles++;
                                 }
                                 id = Convert.ToUInt32(split[1], 16);
                                 id = id << 8;
                                 id += levelid;
-                                FruitIdToBundle[id] = totalBundles-1;
+                                FruitIdToBundle[id] = totalBundles - 1;
                                 bundle.requiredFruitCount++;
                             }
                         }
@@ -144,15 +188,17 @@ namespace C2AP
             }
             //Log.Logger.Information("scanning3");
             FruitBundle bundle = Bundles[value];
-            bundle.collectedFruits.Add(id);
-
-            //bundle.collectedFruits.Add(id);
-            //Log.Logger.Information("scanning5");
-            //Log.Logger.Information($"bundle #{FruitIdToBundle[id]} added fruit id: {id:X}, collected: {bundle.collectedFruits.ToString()}");
-            if (bundle.collectedFruits.Count == bundle.requiredFruitCount)
+            if (bundle.collectedFruits.Add(id))
             {
-                App.Client.SendLocation(new Location { Id = bundle.locationId });
-                Log.Logger.Information($"sending {bundle.locationId}");
+                if (bundle.collectedFruits.Count == bundle.requiredFruitCount)
+                {
+                    App.Client.SendLocation(new Location {
+                        Name = bundle.locationName,
+                        Id = bundle.locationId,
+                        //Category = "Fruit Bundle",
+                    });
+                    Log.Logger.Debug($"sending {bundle.locationId}");
+                }
             }
             //Log.Logger.Information("scanning6");
         }

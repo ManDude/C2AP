@@ -116,7 +116,7 @@ namespace C2AP
             //0x19, 0x11, 0x0A, 0x0F, 0x10
 
             ApItemsHook.InsertHook(0x3A8C0, 0xf030);
-            App.SyncGameState();
+            //App.SyncGameState();
 
             ////exit
             //$"lw $t1, 0x{CrashObject.subtypeOffset:X}($s0)", //subtype

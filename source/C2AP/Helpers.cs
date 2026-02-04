@@ -101,7 +101,7 @@ namespace C2AP
 
                 loc = new Location
                 {
-                    Name = locName,
+                    Name = "beans", //locName
                     Address = address,
                     AddressBit = bit,
                     CheckType = LocationCheckType.Bit,
@@ -126,6 +126,19 @@ namespace C2AP
                 CheckType = LocationCheckType.Int,
                 CheckValue = "10240" //0x2800 == 100% ending level id
             });
+
+            //if (FruitCheck.Bundles != null)
+            //{
+            //    foreach (FruitCheck.FruitBundle bundle in FruitCheck.Bundles)
+            //    {
+            //        locations.Add(new Location
+            //        {
+            //            Name = bundle.locationName,
+            //            Id = bundle.locationId,
+            //        });
+            //    }
+            //}
+            
 
             return locations;
         }
