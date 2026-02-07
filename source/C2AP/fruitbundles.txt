@@ -1171,3 +1171,554 @@ D-69
 D-68
 D-63
 D-62
+#level: Plant Food
+21
+#Before Checkpoint 1
+0-1F
+0-1E
+0-1D
+#Bonus Above Small Platform
+1-C3
+1-C2
+1-C1
+1-C5
+1-C6
+1-C7
+1-C8
+1-C4
+#Bonus Platform Hops Part 1
+2-D1
+2-D0
+2-CF
+2-CE
+2-CD
+2-CC
+#Bonus Platform Hops Part 2
+3-D5
+3-D8
+3-D6
+3-D7
+3-D4
+3-D3
+3-D2
+#Bonus Platform Hops Part 3
+4-E4
+4-E3
+4-DF
+4-E2
+4-E0
+4-E1
+4-DE
+4-DA
+4-D9
+#Before Second Jet Board
+5-62
+5-61
+5-60
+5-5F
+5-5E
+#Third Jet Board Between Plants
+6-A0
+6-9F
+6-9E
+6-9D
+#level: Sewer or Later
+0A
+#Start
+0-13
+0-12
+0-11
+0-10
+0-F
+#Bonus Under Metal Boxes 1
+1-A8
+1-A7
+1-A6
+1-A5
+1-A4
+1-A3
+#Bonus Under Metal Boxes 2
+2-AE
+2-AD
+2-AA
+2-A9
+#Bonus Ending
+3-B6
+3-B7
+3-B8
+3-B9
+3-BA
+3-BB
+#Left Split
+4-8D
+4-8C
+4-85
+4-84
+4-82
+4-81
+#Ending
+5-97
+5-96
+5-93
+5-92
+5-90
+5-8F
+#level: Bear Down
+22
+#Before First Statues
+0-17
+0-16
+0-15
+0-14
+#Uphill
+1-25
+1-24
+1-22
+1-21
+1-20
+1-1F
+1-1E
+1-1D
+1-1C
+1-1B
+#Before Second Statues
+2-28
+2-27
+2-26
+#First Checkpoint Before Metal Crates
+3-32
+3-31
+3-30
+#First Checkpoint Before TNT
+4-39
+4-38
+4-37
+4-36
+4-35
+4-34
+#Second Checkpoint Ice
+5-4D
+5-4C
+5-48
+5-47
+#Second Checkpoint Left Side
+6-54
+6-53
+6-52
+#Second Checkpoint Statues
+7-5B
+7-5A
+7-59
+#Third Checkpoint Uphill
+8-6D
+8-6B
+8-6A
+8-69
+8-68
+8-67
+8-66
+#Ending Part 1
+9-75
+9-73
+9-74
+9-71
+9-72
+9-70
+#Ending Part 2
+A-7C
+A-7B
+A-79
+A-7A
+A-78
+#level: Road to Ruin
+16
+#Secret Entrance Cube Stash
+0-F
+#First 2D
+1-4C
+1-4B
+1-4A
+1-49
+1-47
+#First Checkpoint Falling Platforms
+2-60
+2-5F
+2-5D
+2-5C
+#Death Route Arrow Crate
+3-89
+3-88
+3-87
+3-86
+3-85
+#Death Route Safe Spots
+4-8D
+4-72
+4-71
+4-74
+4-75
+4-90
+4-8F
+#Death Route Wumpa Triangle Part 1
+5-C3
+5-C7
+5-C4
+5-C2
+5-95
+#Death Route Wumpa Triangle Part 2
+6-CC
+6-C6
+6-CB
+6-CA
+6-C5
+#Death Route Backwards
+7-C0
+7-B3
+7-B4
+7-B5
+#Death Route Gem Part 1
+8-A7
+8-94
+8-A1
+8-B0
+8-AF
+8-AE
+#Death Route Gem Part 2
+9-9B
+9-9A
+9-99
+9-92
+9-91
+9-93
+#Wumpa Cross
+A-6B
+A-6A
+A-69
+A-67
+A-68
+#Monkey 1
+B-FA
+B-F9
+B-F8
+B-F4
+B-F0
+B-EF
+B-ED
+B-EB
+#Monkey 2
+C-10F
+C-10E
+C-10B
+C-10A
+C-108
+C-107
+C-105
+C-104
+#level: Un-Bearable
+17
+#Start
+0-13A
+0-13B
+0-13C
+0-13F
+0-13D
+0-13E
+#First Bear Electric Fence
+1-130
+1-131
+1-132
+1-134
+#First Bear Before Wooden Fence
+2-128
+2-129
+2-12C
+2-12D
+2-12E
+2-12F
+#First Bear Ending
+3-F6
+3-F7
+3-F8
+#Second Bear Booster
+4-DB
+4-DC
+4-DD
+4-DE
+4-DF
+4-E0
+#Before Bonus
+5-89
+5-8A
+5-8D
+5-8F
+5-91
+5-90
+#Secret Area Start
+6-1A0
+6-19F
+#Secret Area Big Wumpa Cross Part 1
+7-1BE
+7-1A6
+7-1B0
+7-1AA
+7-1A8
+7-1A9
+7-1AF
+7-1AE
+#Secret Area Big Wumpa Cross Part 2
+8-1AD
+8-1A7
+8-1AB
+8-1AC
+8-1B3
+8-1B2
+8-1BF
+8-1B1
+#Secret Area High Platforms Jump
+9-1C0
+9-1BD
+9-1BC
+9-1BB
+9-1BA
+9-1B9
+9-1B8
+9-1B7
+#Secret Area Above Metal Crates
+A-1CB
+A-1C9
+A-1C4
+#Secret Area Between Turtles 1
+B-1D1
+B-1D0
+B-1CF
+B-1CE
+B-1CD
+#Secret Area Between Turtles 2
+C-1D6
+C-1D5
+C-1D4
+C-1D3
+#Secret Area Arrow Crate
+D-20B
+D-20C
+D-20D
+D-213
+D-212
+D-211
+D-210
+D-20E
+D-20F
+#Secret Area Drop Down Part 1
+E-21A
+E-219
+E-218
+E-216
+E-215
+#Secret Area Drop Down Part 2
+F-21B
+F-21C
+F-21D
+F-21E
+F-21F
+F-221
+F-220
+#Secret Area Tight Bullet Section
+10-1DC
+10-1DB
+#Secret Area Jump to Rats Part 1
+11-1E6
+11-1E5
+11-1E4
+11-1E3
+11-1E2
+11-1E1
+#Secret Area Jump to Rats Part 2
+12-1E8
+12-1E9
+12-1EA
+12-1EC
+12-1EB
+12-1E7
+#Secret Area After Rats Part 1
+13-1F2
+13-1F1
+13-1F0
+13-1EF
+13-1ED
+13-1EE
+#Secret Area After Rats Part 2
+14-1F6
+14-1F5
+14-1F8
+14-1F7
+14-1F4
+14-1F3
+#Secret Area Around Aku Aku Crate
+15-1F9
+15-1FA
+15-1FC
+15-1FE
+15-1FD
+#Bonus Bottom Path Part 1
+16-151
+16-150
+16-14E
+16-14D
+16-14C
+16-14B
+16-14A
+16-149
+#Bonus Bottom Path Part 2
+17-15B
+17-15C
+17-158
+17-157
+17-155
+17-154
+17-153
+17-152
+#Bonus Bottom Path Part 3
+18-165
+18-166
+18-163
+18-164
+18-161
+18-162
+18-15D
+18-160
+#Bonus Bottom Path Part 4
+19-173
+19-172
+19-171
+19-170
+19-16F
+19-16E
+19-16D
+19-16C
+#Bonus Bottom Path Part 5
+1A-17C
+1A-17B
+1A-179
+1A-178
+1A-177
+1A-176
+1A-175
+1A-174
+#Bonus Jump Part 1
+1B-18F
+1B-18E
+1B-18D
+1B-18C
+1B-18B
+1B-18A
+1B-189
+1B-188
+1B-187
+#Bonus Jump Part 2
+1C-198
+1C-197
+1C-196
+1C-195
+1C-193
+1C-192
+1C-191
+1C-190
+#Third Bear Booster 1
+1D-7E
+1D-80
+1D-7F
+1D-81
+1D-82
+1D-83
+#Third Bear Booster 2
+1E-53
+1E-54
+1E-55
+1E-59
+1E-5B
+1E-5C
+#Third Bear Electric Fence 1
+1F-39
+1F-3E
+1F-3F
+#Third Bear Electric Fence 2
+20-26
+20-27
+20-28
+#Fourth Bear TNT
+21-1C
+21-1D
+21-1E
+21-1F
+#Fourth Bear Around Electric Fences
+22-14
+22-15
+22-17
+22-18
+22-1A
+22-1B
+#level: Totally Bear
+25
+#Start
+0-14
+0-13
+0-12
+#Start Before Big Jump
+1-20
+1-1F
+1-1E
+#First Checkpoint Uphill
+2-28
+2-2B
+2-27
+2-26
+#First Checkpoint After Statues
+3-2E
+3-2D
+3-2C
+#First Checkpoint Before Big Jump
+4-32
+4-31
+4-30
+#Before Second Checkpoint
+5-3B
+5-3A
+5-39
+#Second Checkpoint Line
+6-44
+6-43
+6-42
+6-41
+6-40
+6-3E
+6-3D
+#Second Checkpoint Before TNT
+7-49
+7-48
+7-47
+#Second Checkpoint Under Metal Boxes
+8-52
+8-51
+#After Third Checkpoint 
+9-59
+9-57
+9-56
+#Third Checkpoint Uphill
+A-61
+A-60
+A-5F
+A-5E
+A-5D
+A-5C
+A-5B
+#Ending
+B-75
+B-74
+B-73
+B-72
+B-71
+B-70
+B-6F
+B-6E
+B-6D
+B-6C
