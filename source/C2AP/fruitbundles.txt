@@ -104,6 +104,250 @@
 8-26
 8-2A
 8-2B
+#Secret Entrance Start
+9-67
+9-66
+9-62
+9-61
+9-60
+9-5F
+#Secret Entrance Jump 1
+A-6C
+A-6B
+A-6A
+A-69
+#Secret Entrance Down Stairs
+B-72
+B-73
+B-71
+B-6F
+B-70
+B-6E
+#Secret Entrance Jump 2
+C-7B
+C-79
+C-78
+C-77
+C-76
+C-75
+#Secret Entrance Behind Wall Part 1
+D-89
+D-88
+D-87
+D-86
+D-81
+D-80
+D-7F
+D-7E
+D-7D
+D-7C
+#Secret Entrance Behind Wall Part 2
+E-93
+E-92
+E-90
+E-8F
+E-8E
+E-8D
+E-8C
+E-8B
+E-8A
+#Secret Entrance Behind Wall Part 3
+F-A0
+F-9F
+F-9E
+F-9D
+F-9C
+F-9B
+F-9A
+F-99
+F-95
+F-94
+#Secret Entrance Above Penguin
+10-A5
+10-A4
+10-A2
+10-A3
+#Secret Entrance Between 2 Walls
+11-AE
+11-AA
+11-AD
+11-A9
+11-AC
+11-A8
+11-A7
+11-AB
+#Secret Entrance Metal Box 1
+12-C5
+12-C4
+12-C3
+12-C2
+#Secret Entrance Metal Box 2
+13-C6
+13-C7
+13-CA
+#Secret Entrance Metal Box 3
+14-CC
+14-CD
+14-CE
+#Secret Entrance Secret Stash Part 1
+15-BB
+15-BA
+15-BC
+15-B9
+15-BF
+15-BE
+#Secret Entrance Secret Stash Part 2
+16-B2
+16-B3
+16-B6
+16-B4
+16-B8
+16-B7
+#Secret Entrance Arrow Crates Part 1
+17-D2
+17-D6
+17-D1
+17-D5
+17-D4
+17-D3
+17-D0
+17-CF
+#Secret Entrance Arrow Crates Part 2
+18-DE
+18-DC
+18-DB
+18-DA
+18-D9
+18-D8
+18-D7
+#Secret Entrance Arrow Crates Part 3
+19-E3
+19-E1
+19-E4
+19-E5
+19-E0
+19-DF
+19-E2
+#Secret Entrance Arrow Crates Part 4
+1A-EB
+1A-EC
+1A-EE
+1A-ED
+1A-E7
+1A-EA
+1A-E9
+1A-E8
+#Secret Entrance Arrow Crates Part 5
+1B-EF
+1B-F3
+1B-F0
+1B-F4
+1B-F5
+1B-F6
+1B-F2
+1B-F1
+#Secret Entrance Arrow Crates Part 6
+1C-FE
+1C-FD
+1C-FC
+1C-FB
+1C-F7
+1C-F8
+1C-FA
+1C-F9
+#Secret Entrance Arrow Crates Part 7
+1D-FF
+1D-103
+1D-104
+1D-105
+1D-106
+1D-102
+1D-101
+1D-100
+#Secret Entrance Arrow Crates Part 8
+1E-10E
+1E-10D
+1E-10C
+1E-10B
+1E-107
+1E-108
+1E-109
+1E-10A
+#Secret Entrance Around Nitros Part 1
+1F-122
+1F-121
+1F-11F
+1F-120
+1F-11E
+1F-11D
+1F-11B
+1F-11A
+#Secret Entrance Around Nitros Part 2
+20-127
+20-12A
+20-12C
+20-12D
+20-129
+20-128
+#Secret Entrance Around Nitros Part 3
+21-132
+21-13B
+21-13A
+21-135
+21-136
+21-133
+21-134
+#Secret Entrance Ice Plat With Metal Box
+22-14B
+22-14D
+22-14C
+22-14A
+22-142
+22-149
+22-148
+22-145
+22-147
+22-146
+22-143
+22-144
+#Secret Entrance Up Stairs Part 1
+23-15D
+23-15B
+23-15C
+23-158
+23-159
+23-15A
+#Secret Entrance Up Stairs Part 2
+24-16A
+24-169
+24-168
+24-167
+24-166
+24-165
+24-15E
+#Secret Entrance Up Stairs Part 3
+25-16D
+25-16E
+25-16F
+25-170
+25-16B
+#Secret Entrance Drop Part 1
+26-17E
+26-17F
+26-180
+26-181
+26-182
+26-183
+26-184
+26-185
+#Secret Entrance Drop Part 2
+27-177
+27-179
+27-178
+27-17A
+27-17B
+27-17C
+27-17D
 #level: Hang Eight
 19
 #Before Checkpoint 1
@@ -281,4 +525,649 @@ C-24
 C-25
 C-26
 C-27
-#
+#level: Snow Biz
+11
+#Red Gem Path Behind Wall Part 1
+0-60
+0-5F
+0-5E
+0-5D
+0-5C
+0-5B
+0-5A
+0-59
+#Red Gem Path Behind Wall Part 2
+1-68
+1-67
+1-66
+1-65
+1-64
+1-63
+1-62
+1-61
+#Red Gem Path Behind Wall Part 3
+2-70
+2-6F
+2-6E
+2-6D
+2-6C
+2-6B
+2-6A
+2-69
+#Red Gem Path Jump 1
+3-7C
+3-7D
+3-76
+3-75
+3-74
+3-73
+#Red Gem Path Above Nitro
+4-82
+4-81
+4-80
+4-7E
+#Red Gem Path Jump 2
+5-89
+5-8A
+5-88
+5-87
+5-86
+5-85
+#Red Gem Path Around Arrow Crate
+6-A4
+6-9E
+6-9F
+6-8F
+6-91
+6-93
+#Red Gem Path Between TNT Part 1
+7-B1
+7-B2
+7-B3
+7-B4
+7-B5
+7-B6
+#Red Gem Path Between TNT Part 2
+8-B8
+8-B9
+8-BA
+8-BB
+8-BC
+8-BD
+#Red Gem Path Jump 3
+9-DB
+9-DC
+9-DD
+9-DA
+9-D9
+9-D8
+9-D7
+9-D6
+9-D5
+#Red Gem Path Wumpa Triangle Part 1
+A-EB
+A-EA
+A-E9
+A-E8
+A-E7
+A-E6
+#Red Gem Path Wumpa Triangle Part 2
+B-EF
+B-F3
+B-EE
+B-F2
+B-F1
+B-F0
+B-ED
+B-EC
+#Red Gem Path Wumpa Triangle Part 3
+C-FD
+C-FC
+C-FB
+C-F6
+C-F5
+C-F4
+#Red Gem Path Between Crates
+D-100
+D-102
+D-101
+#Red Gem Path Over Nitro 2
+E-10D
+E-10E
+E-10C
+E-10B
+E-109
+E-107
+E-106
+#Red Gem Path Big Wumpa X Part 1
+F-123
+F-11E
+F-11D
+F-11B
+F-119
+#Red Gem Path Big Wumpa X Part 2
+10-126
+10-124
+10-122
+10-11F
+10-121
+10-120
+#Red Gem Path Big Wumpa X Part 3
+11-13B
+11-13A
+11-139
+11-12B
+11-12A
+11-129
+11-137
+11-127
+#Red Gem Path Big Wumpa X Part 4
+12-15D
+12-15B
+12-146
+12-145
+12-143
+#Red Gem Path Big Wumpa X Part 5
+13-142
+13-144
+13-14A
+13-149
+13-148
+13-147
+#Red Gem Path Big Wumpa X Part 6
+14-140
+14-136
+14-135
+14-13C
+14-134
+14-133
+14-132
+14-13D
+14-13F
+14-13E
+#Red Gem Path Jump 4
+15-17F
+15-17E
+15-17D
+15-17C
+15-161
+15-162
+15-17B
+15-160
+#Red Gem Path Between Jumps
+16-183
+16-180
+#Red Gem Path Jump 5 Part 1
+17-18D
+17-18C
+17-187
+17-189
+17-188
+17-185
+17-186
+17-184
+#Red Gem Path Jump 5 Part 2
+18-18F
+18-192
+18-194
+18-193
+18-190
+18-191
+18-18E
+#Red Gem Path Jump 6
+19-1A2
+19-1A3
+19-1A5
+19-1A6
+19-1A4
+19-19A
+19-199
+19-198
+#Red Gem Path Over Nitro 3
+1A-1C6
+1A-1C4
+1A-1C2
+#Red Gem Path After Icicle
+1B-1DF
+1B-1DE
+1B-1DD
+1B-1DC
+1B-1DB
+1B-1DA
+#Red Gem Path Jump 7 Part 1
+1C-1E7
+1C-1E6
+1C-1E5
+1C-1E4
+1C-1E3
+1C-1E2
+#Red Gem Path Jump 7 Part 2
+1D-1EB
+1D-1EC
+1D-1E9
+1D-1EA
+1D-1E8
+#Red Gem Path Jump 8
+1E-1F5
+1E-1F6
+1E-1F4
+1E-1F2
+1E-1F3
+1E-1F1
+1E-1F0
+1E-1EF
+#Above Bonus
+1F-151
+1F-152
+1F-153
+1F-155
+1F-150
+1F-14F
+1F-14E
+1F-14D
+1F-14C
+#Bonus Pit
+20-163
+20-156
+20-164
+20-157
+20-166
+20-165
+20-158
+20-168
+20-167
+20-169
+20-16A
+20-159
+#Bonus Ice 1
+21-173
+21-172
+21-16D
+21-16C
+#Bonus Ice 2
+23-177
+23-176
+23-175
+23-174
+#Bonus Ice 3
+24-18B
+24-17A
+24-179
+24-178
+#Bonus Tunnel Part 1
+25-1A1
+25-1A0
+25-19D
+25-19F
+25-19E
+#Bonus Tunnel Part 2
+26-44
+26-43
+26-42
+26-40
+26-3F
+26-41
+26-3E
+26-3D
+#level: Air Crash
+20
+#Secret Entrance End
+0-3B
+0-3A
+0-39
+0-38
+0-37
+0-35
+#clear
+1-14D
+1-14F
+1-14E
+#Bonus Big Jump Part 1
+2-152
+2-151
+2-150
+2-14F
+2-14E
+2-14D
+#Bonus Big Jump Part 2
+3-15A
+3-159
+3-157
+3-155
+3-154
+3-153
+#Bonus Big Jump Part 3
+4-15F
+4-160
+4-15E
+4-15D
+4-15C
+4-15B
+#Death Route Start
+5-4C
+5-4B
+5-4A
+#Death Route After Moving Pillars
+6-56
+6-55
+6-50
+6-4F
+6-4E
+#level: Bear It
+1D
+#Start Zig Zag
+0-19
+0-18
+0-17
+0-16
+0-15
+0-14
+0-13
+0-12
+#Checkpoint 1
+1-23
+1-22
+#Checkpoint 2
+2-36
+2-35
+2-34
+2-33
+2-32
+2-31
+2-30
+#before Checkpoint 3
+3-48
+3-46
+3-45
+#Ending
+4-5F
+4-5E
+4-5D
+4-5C
+#level: Crash Crush
+1B
+#Electric Fence
+0-BF
+0-C0
+0-C1
+0-C2
+#Narrow Path
+1-AB
+1-AD
+1-AF
+#Booster At The Split
+2-A4
+2-A5
+2-A6
+2-A7
+2-A8
+2-A9
+#Split Path
+3-B3
+3-B2
+3-B1
+3-B0
+3-AE
+3-AC
+#Split Path Electric Fence
+4-BD
+4-BC
+4-BA
+4-B9
+#Split Path Electric Fence Jump
+5-CB
+5-CD
+5-CC
+5-CA
+5-C9
+5-C8
+5-C7
+#Boulder 2 Booster
+6-90
+6-92
+6-94
+6-96
+6-97
+6-98
+#Boulder 2 Around Mines
+7-7E
+7-7F
+7-80
+7-89
+7-8B
+#Boulder 2 Nitros
+8-77
+8-78
+8-7B
+#Boulder 3 Checkpoint
+9-6C
+9-6F
+9-72
+9-71
+9-6E
+9-6B
+9-6A
+9-6D
+9-70
+#Boulder 3 Booster 1
+A-60
+A-61
+A-62
+A-63
+A-66
+A-67
+#Boulder 3 Booster 2
+B-50
+B-51
+B-52
+B-53
+B-54
+B-55
+#Bonus Secret Stash Part 1
+C-14D
+C-14C
+C-14A
+C-149
+C-147
+C-148
+#Bonus Secret Stash Part 2
+D-145
+D-144
+D-151
+D-150
+D-14F
+D-14E
+#Bonus Secret Stash Part 3
+E-143
+E-141
+E-140
+E-138
+E-136
+E-13D
+E-13A
+E-13F
+E-13E
+#Bonus Jump 1
+F-EE
+F-EF
+F-ED
+F-155
+F-154
+F-153
+F-152
+#Bonus Arrow Crate
+10-F6
+10-F5
+10-F4
+10-F3
+10-F2
+10-F1
+#Bonus Top of the Blocks
+11-11A
+11-119
+11-118
+11-FD
+11-FB
+11-F9
+11-F7
+#Bonus Below Block
+12-FE
+12-FC
+12-FA
+12-F8
+#Bonus Between Blocks Part 1
+13-103
+13-104
+13-106
+13-105
+13-102
+13-101
+13-100
+13-FF
+#Bonus Between Blocks Part 2
+14-10B
+14-10C
+14-10E
+14-10D
+14-10A
+14-109
+14-107
+14-108
+#Bonus Between Blocks Part 3
+15-113
+15-114
+15-116
+15-115
+15-112
+15-111
+15-110
+15-10F
+#Bonus Metal Boxes
+16-130
+16-131
+16-127
+16-126
+16-125
+#After Bonus
+17-39
+17-3A
+17-3B
+#Boulder 4 Booster
+18-29
+18-2A
+18-2B
+18-2C
+18-2D
+18-2E
+#Boulder 4 Around Mines
+19-20
+19-21
+19-22
+19-23
+#Boulder 4 Ending
+1A-E
+1A-F
+1A-11
+1A-10
+#level: The Eel Deal
+23
+#Secret Path
+0-86
+0-87
+0-88
+0-89
+#First Split Left
+1-78
+1-77
+1-76
+1-5E
+1-5D
+#Bonus Start
+2-F0
+2-EF
+2-EE
+2-EC
+2-ED
+#Bonus End
+3-EA
+3-E8
+3-108
+3-107
+3-106
+3-105
+#Before Second Split
+4-A7
+4-A6
+4-A5
+4-A4
+#Second Split Left
+5-AF
+5-AE
+5-AC
+5-AB
+5-AA
+5-A9
+#Before Drop
+6-D0
+6-CF
+6-CE
+6-CD
+6-CC
+6-CB
+#Drop
+7-D1
+7-D3
+7-D2
+#First Wire Mesh Square Part 1
+8-23
+8-1F
+8-22
+8-1E
+8-21
+8-1D
+8-20
+8-1C
+#First Wire Mesh Square Part 2
+9-25
+9-24
+9-28
+9-29
+9-2A
+9-26
+9-2B
+9-27
+#Second Wire Mesh Square Part 1
+A-44
+A-3F
+A-43
+A-3E
+A-42
+A-41
+A-3D
+A-3C
+#Second Wire Mesh Square Part 2
+B-4C
+B-4D
+B-4E
+B-4F
+B-55
+B-50
+B-45
+B-40
+#Second Wire Mesh Square Part 3
+C-56
+C-57
+C-58
+C-5A
+C-59
+C-54
+C-53
+C-52
+C-51
+#Wire Mesh End
+D-67
+D-61
+D-69
+D-68
+D-63
+D-62
