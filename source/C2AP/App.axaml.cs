@@ -19,6 +19,7 @@ using Avalonia.OpenGL;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
+using Silk.NET.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -27,6 +28,7 @@ using System.Linq;
 using System.Net;
 using System.Reactive.Concurrency;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading;
@@ -205,6 +207,11 @@ public partial class App : Application
         if (args.Length >= 2) { 
             if (args[0] == "b")
             {
+                if (args[1] == "clear")
+                {
+                    FruitCheck.DebugScanFruitList();
+                    return;
+                }
                 Log.Logger.Information("bundling");
                 string filepath = "bundles.txt";
                 int bundleId = -1;
