@@ -452,7 +452,11 @@ public partial class App : Application
         Memory.WriteBit(Addresses.ColoredGemReceivedAddress, Addresses.YellowGemReceivedBit, crashState.YellowGem);
 
         //set GemLocationsWithReceivedColoredGems
-        crashState.GemLocationsWithReceivedColoredGems = crashState.GemLocations;
+        //crashState.GemLocationsWithReceivedColoredGems = crashState.GemLocations;
+        for (int i = 0; i < crashState.GemLocations.Length; i++)
+        {
+            crashState.GemLocationsWithReceivedColoredGems[i] = crashState.GemLocations[i];
+        }
         crashState.GemLocationsWithReceivedColoredGems[Addresses.ColoredGemOffset] &= Addresses.ColoredGemMaskNegated; //clear out colored gem bits
         crashState.GemLocationsWithReceivedColoredGems[Addresses.ColoredGemOffset] |= (byte)(
             (crashState.RedGem ? (0x1 << Addresses.RedGemReceivedBit) : 0) |
