@@ -37,7 +37,12 @@ namespace C2AP
 
             uint crystalCount = 0;
 
-            List<Item> items = App.Client.GameState.ReceivedItems;
+            List<Item> items = new();
+            if (App.Client != null && App.Client.ItemState != null)
+            {
+                items = App.Client.ItemState.ReceivedItems.ToList();
+            }
+
             foreach (Item item in items)
             {
                 if (item.Name == "Crystal")
