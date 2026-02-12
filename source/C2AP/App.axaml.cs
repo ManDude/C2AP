@@ -97,7 +97,7 @@ public partial class App : Application
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.2");
-        Context.ClientVersion = "v0.2.0 - pre"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+        Context.ClientVersion = "v0.2.0"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
         Context.ConnectClicked += Context_ConnectClicked;
         Context.CommandReceived += (e, a) =>
         {
