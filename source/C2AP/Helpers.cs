@@ -101,7 +101,7 @@ namespace C2AP
 
                 loc = new Location
                 {
-                    Name = "beans", //locName
+                    Name = locName,
                     Address = address,
                     AddressBit = bit,
                     CheckType = LocationCheckType.Bit,

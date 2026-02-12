@@ -1,5 +1,5 @@
 #level: Turtle Woods
-1e
+1E
 #Checkpoint 0
 0-25
 0-23
@@ -818,41 +818,37 @@ F-119
 0-38
 0-37
 0-35
-#clear
-1-14D
+#Bonus Big Jump Part 1
+1-152
+1-151
+1-150
 1-14F
 1-14E
-#Bonus Big Jump Part 1
-2-152
-2-151
-2-150
-2-14F
-2-14E
-2-14D
+1-14D
 #Bonus Big Jump Part 2
-3-15A
-3-159
-3-157
-3-155
-3-154
-3-153
+2-15A
+2-159
+2-157
+2-155
+2-154
+2-153
 #Bonus Big Jump Part 3
-4-15F
-4-160
-4-15E
-4-15D
-4-15C
-4-15B
+3-15F
+3-160
+3-15E
+3-15D
+3-15C
+3-15B
 #Death Route Start
-5-4C
-5-4B
-5-4A
+4-4C
+4-4B
+4-4A
 #Death Route After Moving Pillars
-6-56
-6-55
-6-50
-6-4F
-6-4E
+5-56
+5-55
+5-50
+5-4F
+5-4E
 #level: Bear It
 1D
 #Start Zig Zag
@@ -2591,7 +2587,7 @@ A-DE
 0-11
 0-10
 0-F
-#Around Lazer 1
+#Around Laser 1
 1-20
 1-1F
 1-1E
@@ -2600,7 +2596,7 @@ A-DE
 1-1B
 1-1A
 1-19
-#Around Lazer 2
+#Around Laser 2
 2-24
 2-26
 2-25
@@ -2853,3 +2849,4 @@ A-DE
 A-DD
 A-DC
 A-DB
+#

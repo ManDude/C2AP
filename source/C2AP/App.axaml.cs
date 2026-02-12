@@ -56,6 +56,7 @@ public partial class App : Application
 
         public byte[] CrystalLocations = new byte[8];
         public byte[] GemLocations = new byte[8];
+        public byte[] LevelExitLocations = new byte[8];
 
         public byte[] GemLocationsWithReceivedColoredGems = new byte[8];
 
@@ -171,6 +172,22 @@ public partial class App : Application
                 foreach (Location location in locations)
                 {
                     Log.Logger.Information($"{location.Name}");
+                }
+                break;
+            case "debug_markbosses":
+                uint address;
+                int[] bossBits = [
+                    Addresses.levelNameToId["Dr. N. Gin"],
+                    Addresses.levelNameToId["Ripper Roo"],
+                    Addresses.levelNameToId["Komodo Brothers"],
+                    Addresses.levelNameToId["Tiny Tiger"],
+                    
+                ];
+                for (int i = 0; i < bossBits.Length; i++)
+                {
+                    address = Addresses.LevelExitsAddress + (uint)bossBits[i] / 8;
+                    int bit = bossBits[i] % 8;
+                    Memory.WriteBit(address, bit, true);
                 }
                 break;
 
@@ -363,11 +380,14 @@ public partial class App : Application
         // First get the current locations from the game
         byte[] gemFlags = Memory.ReadByteArray(Addresses.GemLocationsAddress, 8);
         byte[] crystalFlags = Memory.ReadByteArray(Addresses.CrystalLocationsAddress, 8);
+        byte[] levelExitFlags = Memory.ReadByteArray(Addresses.LevelExitsAddress, 8);
         for (int i = 0; i < 8; i++)
         {
             crashState.GemLocations[i] |= gemFlags[i];
             crashState.CrystalLocations[i] |= crystalFlags[i];
+            crashState.LevelExitLocations[i] |= levelExitFlags[i];
         }
+        
 
         uint crystalCount = crashState.Crystals;
         uint clearGemCount = crashState.ClearGems;
@@ -443,11 +463,11 @@ public partial class App : Application
         );
         Memory.WriteByteArray(Addresses.GemLocationsWithReceivedColoredGemsAddress, crashState.GemLocationsWithReceivedColoredGems);
 
-        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.RedGemReceivedBit, crashState.RedGem);
-        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.GreenGemReceivedBit, crashState.GreenGem);
-        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.PurpleGemReceivedBit, crashState.PurpleGem);
-        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.BlueGemReceivedBit, crashState.BlueGem);
-        //Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, Addresses.YellowGemReceivedBit, crashState.YellowGem);
+        //set the locations that should be already done
+
+        Memory.WriteByteArray(Addresses.GemLocationsAddress, crashState.GemLocations);
+        Memory.WriteByteArray(Addresses.CrystalLocationsAddress, crashState.CrystalLocations);
+        Memory.WriteByteArray(Addresses.LevelExitsAddress, crashState.LevelExitLocations);
     }
 
     public static void SyncGameState()
@@ -464,9 +484,13 @@ public partial class App : Application
             {
                 crashState.GemLocations[location.Address - Addresses.GemLocationsAddress] |= (byte)(0x1 << location.AddressBit);
             }
-            if (location.Address >= Addresses.CrystalLocationsAddress && location.Address < Addresses.CrystalLocationsAddress + 8)
+            else if (location.Address >= Addresses.CrystalLocationsAddress && location.Address < Addresses.CrystalLocationsAddress + 8)
             {
                 crashState.CrystalLocations[location.Address - Addresses.CrystalLocationsAddress] |= (byte)(0x1 << location.AddressBit);
+            }
+            else if (location.Address >= Addresses.LevelExitsAddress && location.Address < Addresses.LevelExitsAddress + 8)
+            {
+                crashState.LevelExitLocations[location.Address - Addresses.LevelExitsAddress] |= (byte)(0x1 << location.AddressBit);
             }
         }
 
@@ -510,119 +534,119 @@ public partial class App : Application
             crashState.ClearGems = clearGemCount;
         }
     }
-    public static async Task SyncGameStateOld()
-    {
-        if (Client.LocationState == null) return;
-        if (Client.ItemState == null) return;
+    //public static async Task SyncGameStateOld()
+    //{
+    //    if (Client.LocationState == null) return;
+    //    if (Client.ItemState == null) return;
 
-        Log.Debug($"syncing");
+    //    Log.Debug($"syncing");
 
-        await Client.SaveGameStateAsync();
-        // Convert ILocation list to Location list if needed
-        List<Location> locations = Client.LocationState.CompletedLocations.OfType<Location>().ToList();
-        //List<Location> locations = Client.GameState.CompletedLocations.OfType<Location>().ToList();
-        foreach (Location location in locations)
-        {
-            if (location.Address == 0 || location.AddressBit == 0) continue;
-            Log.Debug($"address: {location.Address:X}, bit: {location.AddressBit}");
-            Memory.WriteBit(location.Address, location.AddressBit, true);
+    //    await Client.SaveGameStateAsync();
+    //    // Convert ILocation list to Location list if needed
+    //    List<Location> locations = Client.LocationState.CompletedLocations.OfType<Location>().ToList();
+    //    //List<Location> locations = Client.GameState.CompletedLocations.OfType<Location>().ToList();
+    //    foreach (Location location in locations)
+    //    {
+    //        if (location.Address == 0 || location.AddressBit == 0) continue;
+    //        Log.Debug($"address: {location.Address:X}, bit: {location.AddressBit}");
+    //        Memory.WriteBit(location.Address, location.AddressBit, true);
 
-            if (location.Address != Addresses.GemLocationsAddress + Addresses.ColoredGemOffset || ((0x1 << location.AddressBit) & Addresses.ColoredGemMask) == 0)
-            {
-                uint offset = (uint) location.Address - Addresses.GemLocationsAddress;
-                Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + offset, location.AddressBit, true);
-            }
-        }
-        //List<Item> items = Client.GameState.ReceivedItems;
-        List<Item> items = Client.ItemState.ReceivedItems.ToList();
-        uint crystalCount = 0;
-        uint clearGemCount = 0;
-        List<int> coloredGems = new();
-        foreach (Item item in items)
-        {
-            switch (item.Name)
-            {
-                case "Crystal":
-                    crystalCount++;
-                    break;
-                case "Clear Gem":
-                    clearGemCount++;
-                    break;
-                case "Red Gem":
-                    coloredGems.Add(Addresses.RedGemReceivedBit);
-                    break;
-                case "Green Gem":
-                    coloredGems.Add(Addresses.GreenGemReceivedBit);
-                    break;
-                case "Purple Gem":
-                    coloredGems.Add(Addresses.PurpleGemReceivedBit);
-                    break;
-                case "Blue Gem":
-                    coloredGems.Add(Addresses.BlueGemReceivedBit);
-                    break;
-                case "Yellow Gem":
-                    coloredGems.Add(Addresses.YellowGemReceivedBit);
-                    break;
-            }
-        }
-        //update center lift with current crystalCount
-        if (CrashObjectMod.liftMod == null)
-        {
-            Log.Debug("Lift mod is not initialized!");
-        }
-        else
-        {
-            List<byte[]> mods = new();
-            mods.Add(CustomHook.ConvertAsm([$"addiu $a0, $zero, 0x{crystalCount:X}"]).ToArray());
-            mods.Add(CustomHook.ConvertAsm([$"addiu $v1, $zero, 0x{crystalCount:X}"]).ToArray());
+    //        if (location.Address != Addresses.GemLocationsAddress + Addresses.ColoredGemOffset || ((0x1 << location.AddressBit) & Addresses.ColoredGemMask) == 0)
+    //        {
+    //            uint offset = (uint) location.Address - Addresses.GemLocationsAddress;
+    //            Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + offset, location.AddressBit, true);
+    //        }
+    //    }
+    //    //List<Item> items = Client.GameState.ReceivedItems;
+    //    List<Item> items = Client.ItemState.ReceivedItems.ToList();
+    //    uint crystalCount = 0;
+    //    uint clearGemCount = 0;
+    //    List<int> coloredGems = new();
+    //    foreach (Item item in items)
+    //    {
+    //        switch (item.Name)
+    //        {
+    //            case "Crystal":
+    //                crystalCount++;
+    //                break;
+    //            case "Clear Gem":
+    //                clearGemCount++;
+    //                break;
+    //            case "Red Gem":
+    //                coloredGems.Add(Addresses.RedGemReceivedBit);
+    //                break;
+    //            case "Green Gem":
+    //                coloredGems.Add(Addresses.GreenGemReceivedBit);
+    //                break;
+    //            case "Purple Gem":
+    //                coloredGems.Add(Addresses.PurpleGemReceivedBit);
+    //                break;
+    //            case "Blue Gem":
+    //                coloredGems.Add(Addresses.BlueGemReceivedBit);
+    //                break;
+    //            case "Yellow Gem":
+    //                coloredGems.Add(Addresses.YellowGemReceivedBit);
+    //                break;
+    //        }
+    //    }
+    //    //update center lift with current crystalCount
+    //    if (CrashObjectMod.liftMod == null)
+    //    {
+    //        Log.Debug("Lift mod is not initialized!");
+    //    }
+    //    else
+    //    {
+    //        List<byte[]> mods = new();
+    //        mods.Add(CustomHook.ConvertAsm([$"addiu $a0, $zero, 0x{crystalCount:X}"]).ToArray());
+    //        mods.Add(CustomHook.ConvertAsm([$"addiu $v1, $zero, 0x{crystalCount:X}"]).ToArray());
 
-            List<uint> modInstructionLines = [6507 - CrashObjectMod.magicOffset / 4, 6507];
-            CrashObjectMod.liftMod.EditMod(mods, modInstructionLines);
-        }
+    //        List<uint> modInstructionLines = [6507 - CrashObjectMod.magicOffset / 4, 6507];
+    //        CrashObjectMod.liftMod.EditMod(mods, modInstructionLines);
+    //    }
         
 
-        //set crystal item flags
-        byte[] bytes = new byte[8];
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            for (int j = 1; j < 0xFF; j = j << 1)
-            {
-                if (crystalCount == 0) break;
-                crystalCount--;
-                bytes[i] |= (byte) j;
-            }
-            if (crystalCount == 0) break;
-        }
-        Memory.WriteByteArray(Addresses.CrystalsReceivedAddress, bytes);
+    //    //set crystal item flags
+    //    byte[] bytes = new byte[8];
+    //    for (int i = 0; i < bytes.Length; i++)
+    //    {
+    //        for (int j = 1; j < 0xFF; j = j << 1)
+    //        {
+    //            if (crystalCount == 0) break;
+    //            crystalCount--;
+    //            bytes[i] |= (byte) j;
+    //        }
+    //        if (crystalCount == 0) break;
+    //    }
+    //    Memory.WriteByteArray(Addresses.CrystalsReceivedAddress, bytes);
 
-        //set clear gem item flags
-        bytes = new byte[8];
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            int bit = 1;
-            for (int j = 0; j < 8; j++)
-            {
-                if (clearGemCount == 0) break;
-                clearGemCount--;
-                if (i == Addresses.ColoredGemOffset && j == Addresses.RedGemReceivedBit)
-                {
-                    j = Addresses.YellowGemReceivedBit + 0x1;
-                }
-                bytes[i] |= (byte)bit;
-                bit = bit << 1;
-            }
-            if (clearGemCount == 0) break;
-        }
-        Memory.WriteByteArray(Addresses.GemsReceivedAddress, bytes);
+    //    //set clear gem item flags
+    //    bytes = new byte[8];
+    //    for (int i = 0; i < bytes.Length; i++)
+    //    {
+    //        int bit = 1;
+    //        for (int j = 0; j < 8; j++)
+    //        {
+    //            if (clearGemCount == 0) break;
+    //            clearGemCount--;
+    //            if (i == Addresses.ColoredGemOffset && j == Addresses.RedGemReceivedBit)
+    //            {
+    //                j = Addresses.YellowGemReceivedBit + 0x1;
+    //            }
+    //            bytes[i] |= (byte)bit;
+    //            bit = bit << 1;
+    //        }
+    //        if (clearGemCount == 0) break;
+    //    }
+    //    Memory.WriteByteArray(Addresses.GemsReceivedAddress, bytes);
 
-        //set colored gem flags
-        foreach (int coloredGemBit in coloredGems)
-        {
-            Memory.WriteBit(Addresses.ColoredGemReceivedAddress, coloredGemBit, true);
-            Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, coloredGemBit, true);
-        }
-        Log.Debug($"done syncing");
-    }
+    //    //set colored gem flags
+    //    foreach (int coloredGemBit in coloredGems)
+    //    {
+    //        Memory.WriteBit(Addresses.ColoredGemReceivedAddress, coloredGemBit, true);
+    //        Memory.WriteBit(Addresses.GemLocationsWithReceivedColoredGemsAddress + Addresses.ColoredGemOffset, coloredGemBit, true);
+    //    }
+    //    Log.Debug($"done syncing");
+    //}
     private async void ItemReceived(object? o, ItemReceivedEventArgs args)
     {
         Log.Logger.Debug($"Item Received: {JsonConvert.SerializeObject(args.Item)}");

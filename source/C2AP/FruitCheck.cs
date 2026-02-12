@@ -117,6 +117,7 @@ namespace C2AP
                                     bundle = Bundles.Last();
                                     bundle.locationId = bundleLocationIdOffset + totalBundles;
                                     totalBundles++;
+
                                 }
                                 id = Convert.ToUInt32(split[1], 16);
                                 id = id << 8;
@@ -125,6 +126,19 @@ namespace C2AP
                                 bundle.requiredFruitCount++;
                             }
                         }
+                        //using (FileStream fs = File.Create("ctestfile-wumpabundles.txt"))
+                        //{
+                        //    FruitIdToBundle.Keys.ToList().ForEach(key =>
+                        //    {
+                        //        uint levelid = key & 0xFF;
+                        //        uint fruitid = key >> 8;
+                        //        //string line = $"{key:X} - level: {levelid:X}, fruit: {fruitid:X}, bundle: {FruitIdToBundle[key]}\n";
+                        //        string line = $"{levelid:X}-{fruitid:X}:{Bundles[FruitIdToBundle[key]].locationId}\n";
+                        //        fs.Write(Encoding.UTF8.GetBytes(line));
+                        //    });
+
+                        //}
+                        Log.Logger.Debug($"Loaded {totalBundles} fruit bundles");
                     }
                 }
                 catch (IOException e)
