@@ -1,12 +1,6 @@
 ﻿using Archipelago.Core.Util;
 using Serilog;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C2AP
 {
@@ -28,7 +22,8 @@ namespace C2AP
         {
             uint currentListHeader = listAddress;
             uint objAddress = 0;
-            while (true)
+            // there are eight active process trees. after that is the dead process tree, which we do not care about.
+            for (int i = 0; i < 8; ++i)
             {
                 Log.Debug($"Checking list header at 0x{currentListHeader:X}");
                 //Log.Information($"Header value is {Memory.ReadUInt(currentListHeader)}");
@@ -36,7 +31,7 @@ namespace C2AP
                 //Log.Information($"Header -0x4 value is {Memory.ReadUInt(currentListHeader - 0x4)}");
                 if (Memory.ReadUInt(currentListHeader) != 2)
                 {
-                    break; //not a valid list
+                    continue; //not a valid list
                 }
                 objAddress = Memory.ReadUInt(currentListHeader + 0x4) - cacheOffset; //first object in list
 
