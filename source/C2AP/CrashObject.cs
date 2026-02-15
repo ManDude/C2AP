@@ -210,5 +210,22 @@ namespace C2AP
             //Log.Debug($"Gool bytecode address is 0x{bytecodeAddress:X}");
             return bytecodeAddress;
         }
+
+        public static uint GetGoolStaticDataAddressFromObject(uint objAddress)
+        {
+            if (objAddress == cacheOffset || objAddress == 0)
+            {
+                Log.Warning($"Null object pointer");
+                return 0;
+            }
+            uint goolEntryAddress = Memory.ReadUInt(objAddress + goolOffset) - cacheOffset;
+            if (goolEntryAddress == 0 || goolEntryAddress == cacheOffset)
+            {
+                Log.Warning($"Null goolEntry pointer");
+                return 0;
+            }
+            uint bytecodeAddress = GetItemAddressFromEntry(goolEntryAddress, 2); //third item is static data
+            return bytecodeAddress;
+        }
     }
 }
